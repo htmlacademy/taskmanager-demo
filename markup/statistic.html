@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>TASKMANAGER</title>
+  </head>
+
+  <body>
+    <div style="display: none">
+      <svg>
+        <symbol
+          id="wave"
+          viewBox="0 0 159 10"
+          preserveAspectRatio="none"
+        >
+          <g
+            fill="none"
+            fill-rule="nonzero"
+            stroke-linecap="square"
+            stroke-width="5"
+          >
+            <path
+              d="M4 4l9.257 2.463L21.367 4l7.927 2.463L38.736 4l9.117 2.463L56.103 4l8.685 2.463L73.472 4l8.684 2.463L90.84 4l8.684 2.463L108.208 4l8.684 2.463L125.576 4l8.684 2.463L142.943 4M146.423 4l9.257 2.463"
+            />
+          </g>
+        </symbol>
+      </svg>
+    </div>
+
+    <main class="main">
+      <section class="main__control control container">
+        <h1 class="control__title">TASKMANAGER</h1>
+        <section class="control__btn-wrap">
+          <input
+            type="radio"
+            name="control"
+            id="control__new-task"
+            class="control__input visually-hidden"
+          />
+          <label for="control__new-task" class="control__label control__label--new-task"
+            >+ ADD NEW TASK</label
+          >
+          <input
+            type="radio"
+            name="control"
+            id="control__task"
+            class="control__input visually-hidden"
+          />
+          <label for="control__task" class="control__label">TASKS</label>
+          <input
+            type="radio"
+            name="control"
+            id="control__statistic"
+            class="control__input visually-hidden"
+            checked
+          />
+          <label for="control__statistic" class="control__label"
+            >STATISTICS</label
+          >
+        </section>
+      </section>
+
+      <section class="main__filter filter container">
+        <input
+          type="radio"
+          id="filter__all"
+          class="filter__input visually-hidden"
+          name="filter"
+        />
+        <label for="filter__all" class="filter__label">
+          All <span class="filter__all-count">13</span></label
+        >
+        <input
+          type="radio"
+          id="filter__overdue"
+          class="filter__input visually-hidden"
+          name="filter"
+          disabled
+        />
+        <label for="filter__overdue" class="filter__label"
+          >Overdue <span class="filter__overdue-count">0</span></label
+        >
+        <input
+          type="radio"
+          id="filter__today"
+          class="filter__input visually-hidden"
+          name="filter"
+          disabled
+        />
+        <label for="filter__today" class="filter__label"
+          >Today <span class="filter__today-count">0</span></label
+        >
+        <input
+          type="radio"
+          id="filter__favorites"
+          class="filter__input visually-hidden"
+          name="filter"
+        />
+        <label for="filter__favorites" class="filter__label"
+          >Favorites <span class="filter__favorites-count">1</span></label
+        >
+        <input
+          type="radio"
+          id="filter__repeating"
+          class="filter__input visually-hidden"
+          name="filter"
+        />
+        <label for="filter__repeating" class="filter__label"
+          >Repeating <span class="filter__repeating-count">1</span></label
+        >
+        <input
+          type="radio"
+          id="filter__archive"
+          class="filter__input visually-hidden"
+          name="filter"
+        />
+        <label for="filter__archive" class="filter__label"
+          >Archive <span class="filter__archive-count">115</span></label
+        >
+      </section>
+
+      <section class="statistic container">
+        <div class="statistic__line">
+          <div class="statistic__period">
+            <h2 class="statistic__period-title">Task Activity DIAGRAM</h2>
+
+            <div class="statistic-input-wrap">
+              <input
+                class="statistic__period-input"
+                type="text"
+                placeholder="01 Feb - 08 Feb"
+              />
+            </div>
+
+            <p class="statistic__period-result">
+              In total for the specified period
+              <span class="statistic__task-found">0</span> tasks were fulfilled.
+            </p>
+          </div>
+          <div class="statistic__line-graphic visually-hidden">
+            <canvas class="statistic__days" width="550" height="150"></canvas>
+          </div>
+        </div>
+
+        <div class="statistic__circle">
+          <div class="statistic__colors-wrap visually-hidden">
+            <canvas class="statistic__colors" width="400" height="300"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
