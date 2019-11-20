@@ -1,0 +1,9 @@
+parserOptions:
+  ecmaVersion: latest
+  sourceType: 'module'
+
+env:
+  es2017: true
+  browser: true
+
+extends: 'htmlacademy/vanilla'

@@ -1,0 +1,16 @@
+{
+  "name": "taskmanager-demo-project",
+  "version": "17.0.0",
+  "private": true,
+  "description": "Учебный демо-проект «Менеджер задач» от HTML Academy",
+  "scripts": {
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "eslint": "8.13.0",
+    "eslint-config-htmlacademy": "5.1.2"
+  },
+  "engines": {
+    "node": "16"
+  }
+}
