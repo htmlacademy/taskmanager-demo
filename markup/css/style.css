@@ -1,0 +1,584 @@
+@font-face {
+  font-family: "HelveticaNeueCyr";
+  src: local("HelveticaNeueCyr-Bold"),
+    url("../fonts/HelveticaNeueCyr-Bold.woff2") format("woff"),
+    url("../fonts/HelveticaNeueCyr-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "HelveticaNeueCyr";
+  src: local("HelveticaNeueCyr-Medium"),
+    url("../fonts/HelveticaNeueCyr-Medium.woff2") format("woff2"),
+    url("../fonts/HelveticaNeueCyr-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "HelveticaNeueCyr";
+  src: local("HelveticaNeueCyr-Roman"),
+    url("../fonts/HelveticaNeueCyr-Roman.woff2") format("woff2"),
+    url("../fonts/HelveticaNeueCyr-Roman.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "HelveticaNeueCyr", Arial, sans-serif;
+}
+
+.container {
+  width: 960px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  width: 1px !important;
+  overflow: hidden;
+}
+
+.main {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+.main__control {
+  margin-bottom: 8px;
+}
+.main__filter {
+  margin-bottom: 29px;
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+}
+
+.control__title {
+  font-size: 16px;
+  line-height: 23px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.control__button {
+  font-size: 16px;
+  color: inherit;
+  margin-left: 54px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.control__button:hover {
+  opacity: 0.7;
+  transition: opacity 0.3s ease-out;
+}
+
+.control__button:disabled {
+  opacity: 1;
+  text-shadow: 1px 0 0 #000000;
+  cursor: inherit;
+}
+
+.filter {
+  display: flex;
+  justify-content: space-between;
+}
+.filter__label {
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 500;
+}
+.filter__label:hover {
+  opacity: 0.7;
+  transition: opacity 0.2s ease-out;
+}
+.filter__input:not(:disabled):checked + .filter__label {
+  text-shadow: 1px 0 0 #000000;
+}
+.filter__input:not(:disabled):checked + .filter__label:hover {
+  text-shadow: 1px 0 0 #000000;
+  opacity: 1;
+}
+.filter__input:disabled + .filter__label {
+  color: #e7e3e3;
+}
+
+.board__sort-list {
+  margin-bottom: 24px;
+}
+
+.board__sort-item {
+  display: inline-block;
+  margin-right: 24px;
+  outline: none;
+  text-decoration: none;
+  color: #000;
+}
+
+.board__sort-item:hover,
+.board__sort-item:focus {
+  opacity: 0.7;
+}
+
+.board__sort-item--active {
+  font-weight: bold;
+}
+
+.board__tasks {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  min-height: 500px;
+  margin-right: -40px;
+}
+.board__no-tasks {
+  text-align: center;
+  text-transform: uppercase;
+}
+.load-more {
+  width: 100%;
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  border: 1px solid #000000;
+  text-transform: uppercase;
+  box-shadow: 0 9px 38px 0 rgba(2, 2, 2, 0.15);
+  cursor: pointer;
+  margin-top: auto;
+  outline: none;
+}
+.load-more:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+}
+
+.card {
+  position: relative;
+  width: 210px;
+  min-height: 210px;
+  margin-bottom: 26px;
+  margin-right: 40px;
+}
+.card__inner {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 7px 15px;
+  box-sizing: border-box;
+  box-shadow: 0 9px 38px 0 rgba(0, 17, 45, 0.12);
+  background-color: #ffffff;
+  outline: 0;
+}
+.card--deadline .card__inner {
+  box-shadow: 0 2px 38px 0 rgba(240, 0, 0, 0.19);
+}
+.card__inner:hover {
+  outline: 10px solid white;
+  transition: outline-width 0.2s ease-in-out;
+  box-shadow: 0 -14px 38px 0 rgba(35, 113, 245, 0.07),
+    0 14px 38px 0 rgba(35, 113, 245, 0.07);
+  z-index: 1;
+}
+.card__control {
+  display: flex;
+  opacity: 0;
+  margin-bottom: 8px;
+  transition: opacity 0.3s ease-out;
+}
+.card__inner:hover .card__control {
+  opacity: 1;
+}
+.card__btn {
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  background-color: transparent;
+  outline: none;
+}
+.card__btn:hover,
+.card__btn:focus {
+  opacity: 0.6;
+}
+.card__btn--edit {
+  margin-right: 9px;
+}
+.card__btn--archive {
+  margin-right: auto;
+}
+.card__btn--disabled {
+  color: #e7e3e3;
+}
+.card__color-bar {
+  width: 100%;
+  height: 10px;
+  font-size: 0;
+  background-color: black;
+  margin-bottom: 10px;
+  stroke: #000000;
+}
+.card--black .card__color-bar {
+  background-color: #000000;
+}
+.card--black .card__color-bar-wave {
+  stroke: #000000;
+}
+.card--yellow .card__color-bar {
+  background-color: #ffe125;
+}
+.card--yellow .card__color-bar-wave {
+  stroke: #ffe125;
+}
+.card--blue .card__color-bar {
+  background-color: #0c5cdd;
+}
+.card--blue .card__color-bar-wave {
+  stroke: #0c5cdd;
+}
+.card--green .card__color-bar {
+  background-color: #31b55c;
+}
+.card--green .card__color-bar-wave {
+  stroke: #31b55c;
+}
+.card--pink .card__color-bar {
+  background-color: #ff3cb9;
+}
+.card--pink .card__color-bar-wave {
+  stroke: #ff3cb9;
+}
+.card--deadline .card__color-bar {
+  background-color: #f11a1a;
+}
+.card--deadline .card__color-bar-wave {
+  stroke: #f11a1a;
+}
+.card--repeat .card__color-bar {
+  background-color: transparent;
+}
+.card__textarea-wrap {
+  position: relative;
+}
+.card__text {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 0;
+  resize: none;
+  height: 98px;
+  width: 100%;
+  outline: none;
+  padding: 3px;
+  font-weight: 500;
+  font-size: 16px;
+  overflow: auto;
+  box-sizing: border-box;
+  border-color: transparent;
+}
+.card__text:focus {
+  border-color: #000000;
+}
+.card__text::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+.card__settings {
+  display: flex;
+  margin-top: auto;
+}
+.card__details {
+  display: flex;
+  flex-direction: column;
+}
+.card__dates {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+.card__date-deadline-toggle {
+  display: none;
+}
+.card__date-deadline {
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.card__date-deadline:disabled {
+  display: none;
+}
+.card--deadline .card__date,
+.card--deadline .card__time {
+  color: #f11a1a;
+}
+.card__date:hover,
+.card__time:hover {
+  opacity: 0.5;
+}
+.card__date {
+  margin-top: auto;
+  font-size: 11px;
+  font-weight: 500;
+  width: 100px;
+  outline: none;
+  border: 0;
+  text-transform: uppercase;
+}
+.card__delete {
+  display: none;
+}
+
+.card__input-deadline-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 140px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.card__time {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  outline: none;
+  width: 100px;
+  padding: 0;
+  border: 0;
+}
+.card__repeat-toggle,
+.card__repeat-days-inner {
+  display: none;
+}
+.card__repeat-wrap {
+  position: relative;
+}
+
+.card__colors-inner {
+  display: none;
+}
+.card__save {
+  display: none;
+}
+.card--edit .card__inner {
+  bottom: auto;
+  z-index: 2;
+  min-height: 450px;
+  border: 1px solid #000000;
+  padding-bottom: 15px;
+}
+.card--edit .card__inner:hover {
+  box-shadow: 0 9px 38px 0 rgba(0, 17, 45, 0.12);
+  outline: 0;
+}
+.card--edit .card__control {
+  opacity: 1;
+}
+.card--edit .card__settings {
+  margin-top: 0;
+  flex-direction: column;
+}
+
+.card--edit .card__details {
+  display: flex;
+  flex-direction: column;
+  order: 2;
+  margin-bottom: 10px;
+}
+.card--edit .card__time,
+.card--edit .card__date {
+  font-size: 11px;
+  width: 100%;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #000000;
+}
+.card--edit .card__repeat-toggle {
+  display: flex;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 11px;
+  text-transform: uppercase;
+  padding: 0;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  border-bottom: 1px solid #000000;
+  background-color: transparent;
+}
+.card__repeat-toggle:hover {
+  opacity: 0.5;
+}
+.card__repeat-status {
+  padding-left: 2px;
+}
+.card--edit .card__dates {
+  flex-direction: column;
+  align-items: flex-start;
+  border-bottom: 2px solid #000000;
+  margin-bottom: 10px;
+}
+.card--edit .card__date-deadline-toggle {
+  display: flex;
+  width: auto;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #000000;
+  outline: none;
+  background-color: transparent;
+}
+.card--edit .card__date-deadline-toggle:hover {
+  opacity: 0.5;
+}
+
+.card--edit .card__colors-inner {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+}
+.card__colors-title {
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.card__colors-wrap {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.card__color {
+  display: flex;
+  width: 15px;
+  height: 15px;
+  font-size: 0;
+  cursor: pointer;
+}
+.card__color:hover {
+  opacity: 0.7;
+}
+.card__color--black {
+  background-color: #0a0a0a;
+}
+.card__color-input--black:checked + .card__color--black {
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #0a0a0a;
+}
+.card__color--yellow {
+  background-color: #ffe125;
+}
+.card__color-input--yellow:checked + .card__color--yellow {
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #ffe125;
+}
+.card__color--blue {
+  background-color: #0c5cdd;
+}
+.card__color-input--blue:checked + .card__color--blue {
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #0c5cdd;
+}
+.card__color--green {
+  background-color: #31b55c;
+}
+.card__color-input--green:checked + .card__color--green {
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #31b55c;
+}
+.card__color--pink {
+  background-color: #ff3cb9;
+}
+.card__color-input--pink:checked + .card__color--pink {
+  box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px #ff3cb9;
+}
+.card--edit .card__img-wrap--empty .card__img {
+  width: 45px;
+  height: 45px;
+}
+.card__repeat-days {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  margin: 0;
+}
+.card__repeat-days:disabled {
+  display: none;
+}
+.card--edit .card__repeat-days-inner {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+.card--edit .card__repeat-day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  border: 1px solid #e3dede;
+  color: #e3dede;
+  cursor: pointer;
+}
+.card--edit .card__repeat-day:hover {
+  background-color: rgba(227, 222, 222, 0.2);
+}
+.card__repeat-day-input:checked + .card__repeat-day {
+  color: #000000;
+  border-color: #000000;
+}
+.card--edit .card__status-btns {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+}
+.card--edit .card__save {
+  display: flex;
+  justify-content: center;
+  border: 1px solid #000000;
+  font-size: 14px;
+  padding: 5px 0;
+  text-transform: uppercase;
+  cursor: pointer;
+  background-color: transparent;
+}
+.card__save:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.card--edit .card__delete {
+  display: flex;
+  border: 0;
+  padding: 5px 0;
+  margin: 0;
+  background-color: transparent;
+  justify-content: center;
+  margin-top: 5px;
+  color: red;
+  text-transform: uppercase;
+  font-size: 10px;
+  cursor: pointer;
+  border: 1px solid red;
+}
+
+.card--edit .card__delete:hover {
+  opacity: 0.6;
+  background-color: rgba(255, 0, 0, 0.1);
+}
