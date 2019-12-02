@@ -1,8 +1,11 @@
 import {MONTH_NAMES} from "../const.js";
-import {formatTime} from "../utils.js";
+import {createElement, formatTime} from "../utils.js";
 
 
-export const createTaskTemplate = (task) => {
+// Функцию для генерации HTML-разметки можно превратить в метод класса,
+// однако делать мы этого не будем, потому что это не критично,
+// а функция у нас уже была описана
+const createTaskTemplate = (task) => {
   // Обратите внимание, что всю работу мы производим заранее.
   // Внутри шаблонной строки мы не производим никаких вычислений,
   // потому что внутри большой разметки сложно искать какой-либо код
@@ -63,3 +66,27 @@ export const createTaskTemplate = (task) => {
     </article>`
   );
 };
+
+export default class Task {
+  constructor(task) {
+    this._task = task;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

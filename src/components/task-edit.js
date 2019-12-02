@@ -1,5 +1,5 @@
 import {COLORS, DAYS, MONTH_NAMES} from "../const.js";
-import {formatTime} from "../utils.js";
+import {createElement, formatTime} from "../utils.js";
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
@@ -44,7 +44,7 @@ const createRepeatingDaysMarkup = (days, repeatingDays) => {
     .join(`\n`);
 };
 
-export const createTaskEditTemplate = (task) => {
+const createTaskEditTemplate = (task) => {
   const {description, dueDate, color, repeatingDays} = task;
 
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
@@ -69,7 +69,7 @@ export const createTaskEditTemplate = (task) => {
                 <use xlink:href="#wave"></use>
               </svg>
             </div>
-
+  
             <div class="card__textarea-wrap">
               <label>
                 <textarea
@@ -79,14 +79,14 @@ export const createTaskEditTemplate = (task) => {
                 >${description}</textarea>
               </label>
             </div>
-
+  
             <div class="card__settings">
               <div class="card__details">
                 <div class="card__dates">
                   <button class="card__date-deadline-toggle" type="button">
                     date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                   </button>
-
+  
                   ${
     isDateShowing ?
       `<fieldset class="card__date-deadline">
@@ -102,11 +102,11 @@ export const createTaskEditTemplate = (task) => {
                       </fieldset>`
       : ``
     }
-
+  
                   <button class="card__repeat-toggle" type="button">
                     repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
                   </button>
-
+  
                   ${
     isRepeatingTask ?
       `<fieldset class="card__repeat-days">
@@ -118,7 +118,7 @@ export const createTaskEditTemplate = (task) => {
     }
                 </div>
               </div>
-
+  
               <div class="card__colors-inner">
                 <h3 class="card__colors-title">Color</h3>
                 <div class="card__colors-wrap">
@@ -126,7 +126,7 @@ export const createTaskEditTemplate = (task) => {
                 </div>
               </div>
             </div>
-
+  
             <div class="card__status-btns">
               <button class="card__save" type="submit">save</button>
               <button class="card__delete" type="button">delete</button>
@@ -136,3 +136,26 @@ export const createTaskEditTemplate = (task) => {
       </article>`
   );
 };
+
+export default class TaskEdit {
+  constructor(task) {
+    this._task = task;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskEditTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
