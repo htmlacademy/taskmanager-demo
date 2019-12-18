@@ -1,9 +1,11 @@
+import moment from "moment";
+
 export const formatTime = (date) => {
-  return window.moment(date).format(`hh:mm`);
+  return moment(date).format(`hh:mm`);
 };
 
 export const formatDate = (date) => {
-  return window.moment(date).format(`DD MMMM`);
+  return moment(date).format(`DD MMMM`);
 };
 
 export const isRepeating = (repeatingDays) => {
@@ -16,7 +18,7 @@ export const isOverdueDate = (dueDate, date) => {
 };
 
 export const isOneDay = (dateA, dateB) => {
-  const a = window.moment(dateA);
-  const b = window.moment(dateB);
+  const a = moment(dateA);
+  const b = moment(dateB);
   return a.diff(b, `days`) === 0 && dateA.getDate() === dateB.getDate();
 };

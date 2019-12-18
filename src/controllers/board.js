@@ -38,9 +38,10 @@ const getSortedTasks = (tasks, sortType, from, to) => {
 
 
 export default class BoardController {
-  constructor(container, tasksModel) {
+  constructor(container, tasksModel, api) {
     this._container = container;
     this._tasksModel = tasksModel;
+    this._api = api;
 
     this._showedTaskControllers = [];
     this._showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
@@ -134,28 +135,47 @@ export default class BoardController {
         taskController.destroy();
         this._updateTasks(this._showingTasksCount);
       } else {
-        this._tasksModel.addTask(newData);
-        taskController.render(newData, TaskControllerMode.DEFAULT);
+        this._api.createTask(newData)
+          .then((taskModel) => {
+            this._tasksModel.addTask(taskModel);
+            taskController.render(taskModel, TaskControllerMode.DEFAULT);
 
-        if (this._showingTasksCount % SHOWING_TASKS_COUNT_BY_BUTTON === 0) {
-          const destroyedTask = this._showedTaskControllers.pop();
-          destroyedTask.destroy();
-        }
+            if (this._showingTasksCount % SHOWING_TASKS_COUNT_BY_BUTTON === 0) {
+              const destroyedTask = this._showedTaskControllers.pop();
+              destroyedTask.destroy();
+            }
 
-        this._showedTaskControllers = [].concat(taskController, this._showedTaskControllers);
-        this._showingTasksCount = this._showedTaskControllers.length;
+            this._showedTaskControllers = [].concat(taskController, this._showedTaskControllers);
+            this._showingTasksCount = this._showedTaskControllers.length;
 
-        this._renderLoadMoreButton();
+            this._renderLoadMoreButton();
+          })
+          .catch(() => {
+            taskController.shake();
+          });
       }
     } else if (newData === null) {
-      this._tasksModel.removeTask(oldData.id);
-      this._updateTasks(this._showingTasksCount);
+      this._api.deleteTask(oldData.id)
+        .then(() => {
+          this._tasksModel.removeTask(oldData.id);
+          this._updateTasks(this._showingTasksCount);
+        })
+        .catch(() => {
+          taskController.shake();
+        });
     } else {
-      const isSuccess = this._tasksModel.updateTask(oldData.id, newData);
+      this._api.updateTask(oldData.id, newData)
+        .then((taskModel) => {
+          const isSuccess = this._tasksModel.updateTask(oldData.id, taskModel);
 
-      if (isSuccess) {
-        taskController.render(newData, TaskControllerMode.DEFAULT);
-      }
+          if (isSuccess) {
+            taskController.render(taskModel, TaskControllerMode.DEFAULT);
+            this._updateTasks(this._showingTasksCount);
+          }
+        })
+        .catch(() => {
+          taskController.shake();
+        });
     }
   }
 
