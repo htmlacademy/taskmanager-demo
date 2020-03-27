@@ -1,5 +1,7 @@
 "use strict";
 
+const TASK_COUNT = 3;
+
 const createSiteMenuTemplate = () => {
   return (
     `<section class="control__btn-wrap">
@@ -373,7 +375,17 @@ const render = (container, template, place) => {
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
-const taskListElement = siteMainElement.querySelector(`.board__tasks`);
-const boardElement = siteMainElement.querySelector(`.board`);
 
 render(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
+render(siteMainElement, createFilterTemplate(), `beforeend`);
+render(siteMainElement, createBoardTemplate(), `beforeend`);
+
+const taskListElement = siteMainElement.querySelector(`.board__tasks`);
+const boardElement = siteMainElement.querySelector(`.board`);
+render(taskListElement, createTaskEditTemplate(), `beforeend`);
+
+for (let i = 0; i < TASK_COUNT; i++) {
+  render(taskListElement, createTaskTemplate(), `beforeend`);
+}
+
+render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
