@@ -11,5 +11,6 @@ Thumbs.db
 *.log*
 node_modules/
 
-# Папка с собранными файлами проекта
-build/
+# Файлы сборки (допишите самостоятельно)
+public/bundle.js
+public/bundle.js.map
