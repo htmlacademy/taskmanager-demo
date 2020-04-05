@@ -33,7 +33,9 @@ const taskListElement = siteMainElement.querySelector(`.board__tasks`);
 render(boardElement, createSortingTemplate(), `afterbegin`);
 render(taskListElement, createTaskEditTemplate(tasks[0]), `beforeend`);
 
-for (let i = 1; i < tasks.length; i++) {
+let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
+
+for (let i = 1; i < showingTasksCount; i++) {
   render(taskListElement, createTaskTemplate(tasks[i]), `beforeend`);
 }
 
