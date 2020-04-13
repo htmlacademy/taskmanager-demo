@@ -68,8 +68,12 @@ const renderBoard = (boardComponent, tasks) => {
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-const filters = generateFilters();
 const tasks = generateTasks(TASK_COUNT);
+const filters = generateFilters();
 
 render(siteHeaderElement, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterComponent(filters).getElement(), RenderPosition.BEFOREEND);
+
+const boardComponent = new BoardComponent();
+render(siteMainElement, boardComponent.getElement(), RenderPosition.BEFOREEND);
+renderBoard(boardComponent, tasks);
