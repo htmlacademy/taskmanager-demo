@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {MONTH_NAMES} from "../const.js";
-import {formatTime} from "../utils.js";
+import {formatTime} from "../utils/common.js";
 
 
 // Функцию для генерации HTML-разметки можно превратить в метод класса,
