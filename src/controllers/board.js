@@ -10,8 +10,12 @@ const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 
 const renderTasks = (taskListElement, tasks) => {
-  tasks.forEach((task) => {
-    renderTask(taskListElement, task);
+  return tasks.map((task) => {
+    const taskController = new TaskController(taskListElement);
+
+    taskController.render(task);
+
+    return taskController;
   });
 };
 
@@ -40,6 +44,7 @@ export default class BoardController {
     this._container = container;
 
     this._tasks = [];
+    this._showedTaskControllers = [];
     this._showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
     this._noTasksComponent = new NoTasksComponent();
     this._sortComponent = new SortComponent();
@@ -67,7 +72,8 @@ export default class BoardController {
 
     const taskListElement = this._tasksComponent.getElement();
 
-    renderTasks(taskListElement, tasks.slice(0, this._showingTasksCount));
+    const newTasks = renderTasks(taskListElement, this._tasks.slice(0, this._showingTasksCount));
+    this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
 
     this._renderLoadMoreButton();
   }
@@ -85,7 +91,10 @@ export default class BoardController {
       const taskListElement = this._tasksComponent.getElement();
       this._showingTasksCount = this._showingTasksCount + SHOWING_TASKS_COUNT_BY_BUTTON;
 
-      renderTasks(taskListElement, sortedTasks.slice(0, this._showingTasksCount));
+      const sortedTasks = getSortedTasks(this._tasks, this._sortComponent.getSortType(), prevTasksCount, this._showingTasksCount);
+      const newTasks = renderTasks(taskListElement, sortedTasks);
+
+      this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
 
       if (this._showingTasksCount >= this._tasks.length) {
         remove(this._loadMoreButtonComponent);
@@ -101,7 +110,8 @@ export default class BoardController {
 
     taskListElement.innerHTML = ``;
 
-    renderTasks(taskListElement, sortedTasks);
+    const newTasks = renderTasks(taskListElement, sortedTasks);
+    this._showedTaskControllers = newTasks;
 
     this._renderLoadMoreButton();
   }
