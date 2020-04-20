@@ -46,27 +46,6 @@ export default class BoardController {
   }
 
   render(tasks) {
-    const renderLoadMoreButton = () => {
-      if (showingTasksCount >= tasks.length) {
-        return;
-      }
-
-      render(container, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
-
-      this._loadMoreButtonComponent.setClickHandler(() => {
-        const prevTasksCount = showingTasksCount;
-        showingTasksCount = showingTasksCount + SHOWING_TASKS_COUNT_BY_BUTTON;
-
-        const sortedTasks = getSortedTasks(tasks, this._sortComponent.getSortType(), prevTasksCount, showingTasksCount);
-
-        renderTasks(taskListElement, sortedTasks);
-
-        if (showingTasksCount >= tasks.length) {
-          remove(this._loadMoreButtonComponent);
-        }
-      });
-    };
-
     const container = this._container.getElement();
     const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
@@ -83,17 +62,37 @@ export default class BoardController {
     let showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 
     renderTasks(taskListElement, tasks.slice(0, showingTasksCount));
-    renderLoadMoreButton();
+  }
 
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      showingTasksCount = SHOWING_TASKS_COUNT_BY_BUTTON;
+  _renderLoadMoreButton() {
+    if (showingTasksCount >= tasks.length) {
+      return;
+    }
 
-      const sortedTasks = getSortedTasks(tasks, sortType, 0, showingTasksCount);
+    render(container, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
-      taskListElement.innerHTML = ``;
+    this._loadMoreButtonComponent.setClickHandler(() => {
+      const prevTasksCount = showingTasksCount;
+      showingTasksCount = showingTasksCount + SHOWING_TASKS_COUNT_BY_BUTTON;
+
+      const sortedTasks = getSortedTasks(tasks, this._sortComponent.getSortType(), prevTasksCount, showingTasksCount);
 
       renderTasks(taskListElement, sortedTasks);
-      renderLoadMoreButton();
+
+      if (showingTasksCount >= tasks.length) {
+        remove(this._loadMoreButtonComponent);
+      }
     });
+  }
+
+  _onSortTypeChange(sortType) {
+    showingTasksCount = SHOWING_TASKS_COUNT_BY_BUTTON;
+
+    const sortedTasks = getSortedTasks(tasks, sortType, 0, showingTasksCount);
+
+    taskListElement.innerHTML = ``;
+
+    renderTasks(taskListElement, sortedTasks);
+    renderLoadMoreButton();
   }
 }
