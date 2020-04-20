@@ -165,6 +165,16 @@ export default class TaskEdit extends AbstractSmartComponent {
     super.rerender();
   }
 
+  reset() {
+    const task = this._task;
+
+    this._isDateShowing = !!task.dueDate;
+    this._isRepeatingTask = Object.values(task.repeatingDays).some(Boolean);
+    this._activeRepeatingDays = Object.assign({}, task.repeatingDays);
+
+    this.rerender();
+  }
+
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`)
       .addEventListener(`submit`, handler);
