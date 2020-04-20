@@ -10,13 +10,18 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "css-loader": "3.5.2",
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
+    "style-loader": "1.1.4",
     "webpack": "4.42.1",
     "webpack-cli": "3.3.11",
     "webpack-dev-server": "3.10.3"
   },
   "engines": {
     "node": "10"
+  },
+  "dependencies": {
+    "flatpickr": "4.6.3"
   }
 }
