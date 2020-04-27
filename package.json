@@ -23,6 +23,8 @@
     "node": "10"
   },
   "dependencies": {
+    "chart.js": "2.9.3",
+    "chartjs-plugin-datalabels": "0.7.0",
     "flatpickr": "4.6.3",
     "he": "1.2.0",
     "moment": "2.24.0"
