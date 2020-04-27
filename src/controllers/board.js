@@ -53,8 +53,10 @@ export default class BoardController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._tasksModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -73,6 +75,11 @@ export default class BoardController {
     this._renderTasks(tasks.slice(0, this._showingTasksCount));
 
     this._renderLoadMoreButton();
+  }
+
+  _removeTasks() {
+    this._showedTaskControllers.forEach((taskController) => taskController.destroy());
+    this._showedTaskControllers = [];
   }
 
   _renderTasks(tasks) {
@@ -107,6 +114,12 @@ export default class BoardController {
     });
   }
 
+  _updateTasks(count) {
+    this._removeTasks();
+    this._renderTasks(this._tasksModel.getTasks().slice(0, count));
+    this._renderLoadMoreButton();
+  }
+
   _onDataChange(taskController, oldData, newData) {
     const isSuccess = this._tasksModel.updateTask(oldData.id, newData);
 
@@ -131,5 +144,9 @@ export default class BoardController {
     this._showedTaskControllers = newTasks;
 
     this._renderLoadMoreButton();
+  }
+
+  _onFilterChange() {
+    this._updateTasks(SHOWING_TASKS_COUNT_ON_START);
   }
 }
