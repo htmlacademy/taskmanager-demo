@@ -1,5 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 import {formatTime, formatDate} from "../utils/common.js";
+import {isOverdueDate} from "../utils/common.js";
+import {encode} from "he";
 
 
 const createButtonMarkup = (name, isActive = true) => {
@@ -20,13 +22,14 @@ const createTaskTemplate = (task) => {
   // Обратите внимание, что всю работу мы производим заранее.
   // Внутри шаблонной строки мы не производим никаких вычислений,
   // потому что внутри большой разметки сложно искать какой-либо код
-  const {description, dueDate, color, repeatingDays} = task;
+  const {description: notSanitizedDescription, dueDate, color, repeatingDays} = task;
 
-  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate, new Date());
   const isDateShowing = !!dueDate;
 
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
+  const description = encode(notSanitizedDescription);
 
   const editButton = createButtonMarkup(`edit`);
   const archiveButton = createButtonMarkup(`archive`, !task.isArchive);
