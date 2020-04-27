@@ -2,11 +2,12 @@ import TaskComponent from "../components/task.js";
 import TaskEditComponent from "../components/task-edit.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
-const Mode = {
+export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
 };
 
+export const EmptyTask = {};
 export default class TaskController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
