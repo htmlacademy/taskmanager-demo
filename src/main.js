@@ -1,5 +1,7 @@
 "use strict";
 
+const TASK_COUNT = 3;
+
 const createSiteMenuTemplate = () => {
   return (
     `<section class="control__btn-wrap">
@@ -382,8 +384,8 @@ const taskListElement = boardElement.querySelector(`.board__tasks`);
 
 render(taskListElement, createTaskEditTemplate(), `beforeend`);
 
-render(taskListElement, createTaskTemplate(), `beforeend`);
-render(taskListElement, createTaskTemplate(), `beforeend`);
-render(taskListElement, createTaskTemplate(), `beforeend`);
+for (let i = 0; i < TASK_COUNT; i++) {
+  render(taskListElement, createTaskTemplate(), `beforeend`);
+}
 
 render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
