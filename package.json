@@ -6,13 +6,15 @@
   "scripts": {
     "eslint": "eslint src/",
     "test": "npm run eslint",
-    "build": "webpack --mode development"
+    "build": "webpack --mode development",
+    "start": "webpack serve --mode development --open"
   },
   "devDependencies": {
     "eslint": "7.32.0",
     "eslint-config-htmlacademy": "5.0.0",
     "webpack": "5.62.1",
-    "webpack-cli": "4.9.1"
+    "webpack-cli": "4.9.1",
+    "webpack-dev-server": "4.4.0"
   },
   "engines": {
     "node": "16"
