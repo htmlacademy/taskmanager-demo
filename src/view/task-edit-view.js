@@ -40,6 +40,30 @@ function createTaskEditDateTemplate(dueDate) {
   );
 }
 
+function createTaskEditRepeatingTemplate(repeating) {
+  return (
+    `<button class="card__repeat-toggle" type="button">
+      repeat:<span class="card__repeat-status">${isTaskRepeating(repeating) ? 'yes' : 'no'}</span>
+    </button>
+
+  ${isTaskRepeating(repeating) ? `<fieldset class="card__repeat-days">
+    <div class="card__repeat-days-inner">
+      ${Object.entries(repeating).map(([day, repeat]) => `<input
+        class="visually-hidden card__repeat-day-input"
+        type="checkbox"
+        id="repeat-${day}"
+        name="repeat"
+        value="${day}"
+        ${repeat ? 'checked' : ''}
+      />
+      <label class="card__repeat-day" for="repeat-${day}"
+        >${day}</label
+      >`).join('')}
+    </div>
+  </fieldset>` : ''}`
+  );
+}
+
 function createTaskEditTemplate(data) {
   const {color, description, dueDate, repeating} = data;
 
@@ -48,6 +72,8 @@ function createTaskEditTemplate(data) {
   const repeatingClassName = isTaskRepeating(repeating)
     ? 'card--repeat'
     : '';
+
+  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating);
 
   return (
     `<article class="card card--edit card--${color} ${repeatingClassName}">
@@ -74,87 +100,7 @@ function createTaskEditTemplate(data) {
               <div class="card__dates">
                 ${dateTemplate}
 
-                <button class="card__repeat-toggle" type="button">
-                  repeat:<span class="card__repeat-status">yes</span>
-                </button>
-
-                <fieldset class="card__repeat-days">
-                  <div class="card__repeat-days-inner">
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-mo-4"
-                      name="repeat"
-                      value="mo"
-                    />
-                    <label class="card__repeat-day" for="repeat-mo-4"
-                      >mo</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-tu-4"
-                      name="repeat"
-                      value="tu"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-tu-4"
-                      >tu</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-we-4"
-                      name="repeat"
-                      value="we"
-                    />
-                    <label class="card__repeat-day" for="repeat-we-4"
-                      >we</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-th-4"
-                      name="repeat"
-                      value="th"
-                    />
-                    <label class="card__repeat-day" for="repeat-th-4"
-                      >th</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-fr-4"
-                      name="repeat"
-                      value="fr"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-fr-4"
-                      >fr</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      name="repeat"
-                      value="sa"
-                      id="repeat-sa-4"
-                    />
-                    <label class="card__repeat-day" for="repeat-sa-4"
-                      >sa</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-su-4"
-                      name="repeat"
-                      value="su"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-su-4"
-                      >su</label
-                    >
-                  </div>
-                </fieldset>
+                ${repeatingTemplate}
               </div>
             </div>
 
