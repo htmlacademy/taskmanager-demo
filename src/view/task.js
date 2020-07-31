@@ -1,5 +1,9 @@
 import dayjs from "dayjs";
 
+const isExpired = (dueDate) => {
+  return dueDate === null ? false : dayjs().isAfter(dueDate, `D`);
+};
+
 export const createTaskTemplate = (task) => {
   const {color, description, dueDate} = task;
 
@@ -7,7 +11,11 @@ export const createTaskTemplate = (task) => {
     ? dayjs(dueDate).format(`D MMMM`)
     : ``;
 
-  return `<article class="card card--${color}">
+  const deadlineClassName = isExpired(dueDate)
+    ? `card--deadline`
+    : ``;
+
+  return `<article class="card card--${color} ${deadlineClassName}">
     <div class="card__form">
       <div class="card__inner">
         <div class="card__control">
