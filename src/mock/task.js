@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils.js';
+import {COLORS} from '../const.js';
 
 const generateDescription = () => {
   const descriptions = [
@@ -41,6 +42,12 @@ const generateRepeating = () => ({
   su: false,
 });
 
+const getRandomColor = () => {
+  const randomIndex = getRandomInteger(0, COLORS.length - 1);
+
+  return COLORS[randomIndex];
+};
+
 export const generateTask = () => {
   const dueDate = generateDate();
   const repeating = dueDate === null
@@ -59,8 +66,8 @@ export const generateTask = () => {
     description: generateDescription(),
     dueDate,
     repeating,
-    color: 'black',
-    isArchive: false,
-    isFavorite: false,
+    color: getRandomColor(),
+    isArchive: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
