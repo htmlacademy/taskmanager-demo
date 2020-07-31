@@ -7,7 +7,7 @@ import {createBoardTemplate} from './view/board.js';
 import {renderTemplate, RenderPosition} from './render.js';
 import {generateTask} from './mock/task.js';
 
-const TASK_COUNT = 3;
+const TASK_COUNT = 4;
 
 const tasks = Array.from({length: TASK_COUNT}, generateTask);
 
@@ -21,9 +21,9 @@ renderTemplate(siteMainElement, createBoardTemplate(), RenderPosition.BEFOREEND)
 const boardElement = siteMainElement.querySelector('.board');
 const taskListElement = boardElement.querySelector('.board__tasks');
 
-renderTemplate(taskListElement, createTaskEditTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(taskListElement, createTaskEditTemplate(tasks[0]), RenderPosition.BEFOREEND);
 
-for (let i = 0; i < TASK_COUNT; i++) {
+for (let i = 1; i < TASK_COUNT; i++) {
   renderTemplate(taskListElement, createTaskTemplate(tasks[i]), RenderPosition.BEFOREEND);
 }
 
