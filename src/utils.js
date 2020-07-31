@@ -13,4 +13,6 @@ const humanizeTaskDueDate = (dueDate) => dayjs(dueDate).format('D MMMM');
 
 const isTaskExpired = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 
-export {getRandomInteger, humanizeTaskDueDate, isTaskExpired};
+const isTaskRepeating = (repeating) => Object.values(repeating).some(Boolean);
+
+export {getRandomInteger, humanizeTaskDueDate, isTaskExpired, isTaskRepeating};
