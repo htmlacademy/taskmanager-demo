@@ -2,8 +2,10 @@ import dayjs from 'dayjs';
 
 const isExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
 
+const isRepeating = (repeating) => Object.values(repeating).some(Boolean);
+
 export const createTaskTemplate = (task) => {
-  const {color, description, dueDate} = task;
+  const {color, description, dueDate, repeating, isArchive, isFavorite} = task;
 
   const date = dueDate !== null
     ? dayjs(dueDate).format('D MMMM')
@@ -13,19 +15,31 @@ export const createTaskTemplate = (task) => {
     ? 'card--deadline'
     : '';
 
-  return `<article class="card card--${color} ${deadlineClassName}">
+  const repeatClassName = isRepeating(repeating)
+    ? 'card--repeat'
+    : '';
+
+  const archiveClassName = isArchive
+    ? 'card__btn--archive card__btn--disabled'
+    : 'card__btn--archive';
+
+  const favoriteClassName = isFavorite
+    ? 'card__btn--favorites card__btn--disabled'
+    : 'card__btn--favorites';
+
+  return `<article class="card card--${color} ${deadlineClassName} ${repeatClassName}">
     <div class="card__form">
       <div class="card__inner">
         <div class="card__control">
           <button type="button" class="card__btn card__btn--edit">
             edit
           </button>
-          <button type="button" class="card__btn card__btn--archive">
+          <button type="button" class="card__btn ${archiveClassName}">
             archive
           </button>
           <button
             type="button"
-            class="card__btn card__btn--favorites"
+            class="card__btn ${favoriteClassName}"
           >
             favorites
           </button>
