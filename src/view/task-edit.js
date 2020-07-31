@@ -1,5 +1,20 @@
-export const createTaskEditTemplate = () => {
-  return `<article class="card card--edit card--yellow card--repeat">
+export const createTaskEditTemplate = (task = {}) => {
+  const {
+    color = `black`,
+    description = ``,
+    dueDate = null,
+    repeating = {
+      mo: false,
+      tu: false,
+      we: false,
+      th: false,
+      fr: false,
+      sa: false,
+      su: false
+    }
+  } = task;
+
+  return `<article class="card card--edit card--${color} card--repeat">
     <form class="card__form" method="get">
       <div class="card__inner">
         <div class="card__color-bar">
@@ -14,7 +29,7 @@ export const createTaskEditTemplate = () => {
               class="card__text"
               placeholder="Start typing your text here..."
               name="text"
-            >This is example of task edit. You can set date and chose repeating days and color.</textarea>
+            >${description}</textarea>
           </label>
         </div>
 
