@@ -31,8 +31,7 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #handleLoadMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #handleLoadMoreButtonClick = () => {
     this.#boardTasks
       .slice(this.#renderedTaskCount, this.#renderedTaskCount + TASK_COUNT_PER_STEP)
       .forEach((task) => this.#renderTask(task));
@@ -65,13 +64,12 @@ export default class BoardPresenter {
       }
     };
 
-    taskComponent.element.querySelector('.card__btn--edit').addEventListener('click', () => {
+    taskComponent.setEditClickHandler(() => {
       replaceCardToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    taskEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    taskEditComponent.setFormSubmitHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
@@ -97,7 +95,7 @@ export default class BoardPresenter {
     if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
       render(this.#loadMoreButtonComponent, this.#boardComponent.element);
 
-      this.#loadMoreButtonComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
+      this.#loadMoreButtonComponent.setClickHandler(this.#handleLoadMoreButtonClick);
     }
   };
 }
