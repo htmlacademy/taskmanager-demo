@@ -31,8 +31,7 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
-  #loadMoreButtonClickHandler = (evt) => {
-    evt.preventDefault();
+  #handleLoadMoreButtonClick = () => {
     this.#boardTasks
       .slice(this.#renderedTaskCount, this.#renderedTaskCount + TASK_COUNT_PER_STEP)
       .forEach((task) => this.#renderTask(task));
@@ -46,35 +45,37 @@ export default class BoardPresenter {
   };
 
   #renderTask(task) {
-    const taskComponent = new TaskView({task});
-    const taskEditComponent = new TaskEditView({task});
-
-    const replaceCardToForm = () => {
-      this.#taskListComponent.element.replaceChild(taskEditComponent.element, taskComponent.element);
-    };
-
-    const replaceFormToCard = () => {
-      this.#taskListComponent.element.replaceChild(taskComponent.element, taskEditComponent.element);
-    };
-
     const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        replaceFormToCard();
+        replaceFormToCard.call(this);
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
 
-    taskComponent.element.querySelector('.card__btn--edit').addEventListener('click', () => {
-      replaceCardToForm();
-      document.addEventListener('keydown', escKeyDownHandler);
+    const taskComponent = new TaskView({
+      task,
+      onEditClick: () => {
+        replaceCardToForm.call(this);
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
     });
 
-    taskEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replaceFormToCard();
-      document.removeEventListener('keydown', escKeyDownHandler);
+    const taskEditComponent = new TaskEditView({
+      task,
+      onFormSubmit: () => {
+        replaceFormToCard.call(this);
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
     });
+
+    function replaceCardToForm() {
+      this.#taskListComponent.element.replaceChild(taskEditComponent.element, taskComponent.element);
+    }
+
+    function replaceFormToCard() {
+      this.#taskListComponent.element.replaceChild(taskComponent.element, taskEditComponent.element);
+    }
 
     render(taskComponent, this.#taskListComponent.element);
   }
@@ -95,10 +96,10 @@ export default class BoardPresenter {
     }
 
     if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
-      this.#loadMoreButtonComponent = new LoadMoreButtonView();
+      this.#loadMoreButtonComponent = new LoadMoreButtonView({
+        onClick: this.#handleLoadMoreButtonClick
+      });
       render(this.#loadMoreButtonComponent, this.#boardComponent.element);
-
-      this.#loadMoreButtonComponent.element.addEventListener('click', this.#loadMoreButtonClickHandler);
     }
   }
 }
