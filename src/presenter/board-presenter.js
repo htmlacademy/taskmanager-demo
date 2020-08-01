@@ -17,6 +17,7 @@ export default class BoardPresenter {
   #loadMoreButtonComponent = null;
 
   #boardTasks = [];
+  #renderedTaskCount = TASK_COUNT_PER_STEP;
 
   constructor({boardContainer, tasksModel}) {
     this.#boardContainer = boardContainer;
@@ -30,7 +31,7 @@ export default class BoardPresenter {
     render(new SortView(), this.#boardComponent.element);
     render(this.#taskListComponent, this.#boardComponent.element);
 
-    for (let i = 0; i < this.#boardTasks.length; i++) {
+    for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
       this.#renderTask(this.#boardTasks[i]);
     }
 
@@ -44,7 +45,16 @@ export default class BoardPresenter {
 
   #loadMoreButtonClickHandler = (evt) => {
     evt.preventDefault();
-    alert('Works!');
+    this.#boardTasks
+      .slice(this.#renderedTaskCount, this.#renderedTaskCount + TASK_COUNT_PER_STEP)
+      .forEach((task) => this.#renderTask(task));
+
+    this.#renderedTaskCount += TASK_COUNT_PER_STEP;
+
+    if (this.#renderedTaskCount >= this.#boardTasks.length) {
+      this.#loadMoreButtonComponent.element.remove();
+      this.#loadMoreButtonComponent.removeElement();
+    }
   };
 
   #renderTask(task) {
