@@ -19,6 +19,13 @@ const filters = generateFilter(tasks);
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
+const renderTask = (taskListElement, task) => {
+  const taskComponent = new TaskView(task);
+  const taskEditComponent = new TaskEditView(task);
+
+  render(taskListElement, taskComponent.element, RenderPosition.BEFOREEND);
+};
+
 render(siteHeaderElement, new SiteMenuView().element, RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterView(filters).element, RenderPosition.BEFOREEND);
 
@@ -28,10 +35,9 @@ render(boardComponent.element, new SortView().element, RenderPosition.AFTERBEGIN
 
 const taskListComponent = new TaskListView();
 render(boardComponent.element, taskListComponent.element, RenderPosition.BEFOREEND);
-render(taskListComponent.element, new TaskEditView(tasks[0]).element, RenderPosition.BEFOREEND);
 
-for (let i = 1; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
-  render(taskListComponent.element, new TaskView(tasks[i]).element, RenderPosition.BEFOREEND);
+for (let i = 0; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
+  renderTask(taskListComponent.element, tasks[i]);
 }
 
 if (tasks.length > TASK_COUNT_PER_STEP) {
@@ -45,7 +51,7 @@ if (tasks.length > TASK_COUNT_PER_STEP) {
     evt.preventDefault();
     tasks
       .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_PER_STEP)
-      .forEach((task) => render(taskListComponent.element, new TaskView(task).element, RenderPosition.BEFOREEND));
+      .forEach((task) => renderTask(taskListComponent.element, task));
 
     renderedTaskCount += TASK_COUNT_PER_STEP;
 
