@@ -20,29 +20,15 @@ export default class BoardPresenter {
   #boardTasks = [];
   #renderedTaskCount = TASK_COUNT_PER_STEP;
 
-  init = (boardContainer, tasksModel) => {
+  constructor(boardContainer, tasksModel) {
     this.#boardContainer = boardContainer;
     this.#tasksModel = tasksModel;
+  }
+
+  init = () => {
     this.#boardTasks = [...this.#tasksModel.tasks];
 
-    render(this.#boardComponent, this.#boardContainer);
-
-    if (this.#boardTasks.every((task) => task.isArchive)) {
-      render(new NoTaskView(), this.#boardComponent.element);
-    } else {
-      render(new SortView(), this.#boardComponent.element);
-      render(this.#taskListComponent, this.#boardComponent.element);
-
-      for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
-        this.#renderTask(this.#boardTasks[i]);
-      }
-
-      if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
-        render(this.#loadMoreButtonComponent, this.#boardComponent.element);
-
-        this.#loadMoreButtonComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
-      }
-    }
+    this.#renderBoard();
   };
 
   #handleLoadMoreButtonClick = (evt) => {
@@ -91,5 +77,27 @@ export default class BoardPresenter {
     });
 
     render(taskComponent, this.#taskListComponent.element);
+  };
+
+  #renderBoard = () => {
+    render(this.#boardComponent, this.#boardContainer);
+
+    if (this.#boardTasks.every((task) => task.isArchive)) {
+      render(new NoTaskView(), this.#boardComponent.element);
+      return;
+    }
+
+    render(new SortView(), this.#boardComponent.element);
+    render(this.#taskListComponent, this.#boardComponent.element);
+
+    for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
+      this.#renderTask(this.#boardTasks[i]);
+    }
+
+    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
+      render(this.#loadMoreButtonComponent, this.#boardComponent.element);
+
+      this.#loadMoreButtonComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
+    }
   };
 }
