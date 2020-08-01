@@ -1,8 +1,8 @@
 import {createElement} from '../render.js';
 
-const createLoadMoreButtonTemplate = () => '<button class="load-more" type="button">load more</button>';
+const createTaskListTemplate = () => '<div class="board__tasks"></div>';
 
-export default class LoadMoreButtonView {
+export default class TaskListView {
   #element = null;
 
   get element() {
@@ -14,7 +14,7 @@ export default class LoadMoreButtonView {
   }
 
   get template() {
-    return createLoadMoreButtonTemplate();
+    return createTaskListTemplate();
   }
 
   removeElement() {
