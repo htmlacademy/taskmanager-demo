@@ -23,6 +23,23 @@ const renderTask = (taskListElement, task) => {
   const taskComponent = new TaskView(task);
   const taskEditComponent = new TaskEditView(task);
 
+  const replaceCardToForm = () => {
+    taskListElement.replaceChild(taskEditComponent.element, taskComponent.element);
+  };
+
+  const replaceFormToCard = () => {
+    taskListElement.replaceChild(taskComponent.element, taskEditComponent.element);
+  };
+
+  taskComponent.element.querySelector('.card__btn--edit').addEventListener('click', () => {
+    replaceCardToForm();
+  });
+
+  taskEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
   render(taskListElement, taskComponent.element, RenderPosition.BEFOREEND);
 };
 
