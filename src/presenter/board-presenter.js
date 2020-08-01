@@ -1,4 +1,4 @@
-import {render} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import BoardView from '../view/board-view.js';
 import SortView from '../view/sort-view.js';
 import TaskListView from '../view/task-list-view.js';
@@ -39,8 +39,7 @@ export default class BoardPresenter {
     this.#renderedTaskCount += TASK_COUNT_PER_STEP;
 
     if (this.#renderedTaskCount >= this.#boardTasks.length) {
-      this.#loadMoreButtonComponent.element.remove();
-      this.#loadMoreButtonComponent.removeElement();
+      remove(this.#loadMoreButtonComponent);
     }
   };
 
@@ -49,11 +48,11 @@ export default class BoardPresenter {
     const taskEditComponent = new TaskEditView(task);
 
     const replaceCardToForm = () => {
-      this.#taskListComponent.element.replaceChild(taskEditComponent.element, taskComponent.element);
+      replace(taskEditComponent, taskComponent);
     };
 
     const replaceFormToCard = () => {
-      this.#taskListComponent.element.replaceChild(taskComponent.element, taskEditComponent.element);
+      replace(taskComponent, taskEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
