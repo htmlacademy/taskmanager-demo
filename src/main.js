@@ -8,9 +8,9 @@ const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
 const tasksModel = new TasksModel();
-const boardPresenter = new BoardPresenter();
+const boardPresenter = new BoardPresenter(siteMainElement, tasksModel);
 
 render(new NewTaskButtonView(), siteHeaderElement);
 render(new FilterView(), siteMainElement);
 
-boardPresenter.init(siteMainElement, tasksModel);
+boardPresenter.init();
