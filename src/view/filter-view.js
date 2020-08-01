@@ -1,3 +1,5 @@
+import {createElement} from '../render.js';
+
 const createFilterItemTemplate = (filter, isChecked) => {
   const {name, count} = filter;
 
@@ -16,7 +18,7 @@ const createFilterItemTemplate = (filter, isChecked) => {
   );
 };
 
-export const createFilterTemplate = (filterItems) => {
+const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createFilterItemTemplate(filter, index === 0))
     .join('');
@@ -25,3 +27,28 @@ export const createFilterTemplate = (filterItems) => {
     ${filterItemsTemplate}
   </section>`;
 };
+
+export default class FilterView {
+  #element = null;
+  #filters = null;
+
+  constructor(filters) {
+    this.#filters = filters;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFilterTemplate(this.#filters);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
