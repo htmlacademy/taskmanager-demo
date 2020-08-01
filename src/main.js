@@ -29,17 +29,27 @@ const taskListElement = boardElement.querySelector(`.board__tasks`);
 
 render(taskListElement, createTaskEditTemplate(tasks[0]), `beforeend`);
 
-for (let i = 1; i < TASK_COUNT; i++) {
+for (let i = 1; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
   render(taskListElement, createTaskTemplate(tasks[i]), `beforeend`);
 }
 
 if (tasks.length > TASK_COUNT_PER_STEP) {
+  let renderedTaskCount = TASK_COUNT_PER_STEP;
+
   render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
 
   const loadMoreButton = boardElement.querySelector(`.load-more`);
 
   loadMoreButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
-    alert('Works!');
+    tasks
+      .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_PER_STEP)
+      .forEach((task) => render(taskListElement, createTaskTemplate(task), `beforeend`));
+
+    renderedTaskCount += TASK_COUNT_PER_STEP;
+
+    if (renderedTaskCount >= tasks.length) {
+      loadMoreButton.remove();
+    }
   });
 }
