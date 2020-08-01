@@ -1,6 +1,23 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeTaskDueDate, isTaskRepeating} from '../utils.js';
 import {COLORS} from '../const.js';
+
+const BLANK_TASK = {
+  color: COLORS[0],
+  description: '',
+  dueDate: null,
+  repeating: {
+    mo: false,
+    tu: false,
+    we: false,
+    th: false,
+    fr: false,
+    sa: false,
+    su: false,
+  },
+  isArchive: false,
+  isFavorite: false,
+};
 
 const createTaskEditDateTemplate = (dueDate) => (
   `<button class="card__date-deadline-toggle" type="button">
@@ -130,27 +147,15 @@ const createTaskEditTemplate = (task = {}) => {
   );
 };
 
-export default class TaskEditView {
-  #element = null;
+export default class TaskEditView extends AbstractView {
   #task = null;
 
-  constructor(task) {
+  constructor(task = BLANK_TASK) {
+    super();
     this.#task = task;
   }
 
   get template() {
     return createTaskEditTemplate(this.#task);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
