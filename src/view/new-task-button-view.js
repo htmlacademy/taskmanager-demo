@@ -1,25 +1,11 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createNewTaskButtonTemplate() {
   return '<button class="control__button">+ ADD NEW TASK</button>';
 }
 
-export default class NewTaskButtonView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class NewTaskButtonView extends AbstractView {
   get template() {
     return createNewTaskButtonTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
