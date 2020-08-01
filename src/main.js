@@ -6,16 +6,18 @@ import {createLoadMoreButtonTemplate} from './view/load-more-button-view.js';
 import {createBoardTemplate} from './view/board-view.js';
 import {renderTemplate, RenderPosition} from './render.js';
 import {generateTask} from './mock/task.js';
+import {generateFilter} from './mock/filter.js';
 
 const TASK_COUNT = 4;
 
 const tasks = Array.from({length: TASK_COUNT}, generateTask);
+const filters = generateFilter(tasks);
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
 renderTemplate(siteHeaderElement, createSiteMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(siteMainElement, createFilterTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteMainElement, createFilterTemplate(filters), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createBoardTemplate(), RenderPosition.BEFOREEND);
 
 const boardElement = siteMainElement.querySelector('.board');
