@@ -33,6 +33,24 @@ export default class BoardPresenter {
 
   #renderTask = (task) => {
     const taskComponent = new TaskView(task);
+    const taskEditComponent = new TaskEditView(task);
+
+    const replaceCardToForm = () => {
+      this.#taskListComponent.element.replaceChild(taskEditComponent.element, taskComponent.element);
+    };
+
+    const replaceFormToCard = () => {
+      this.#taskListComponent.element.replaceChild(taskComponent.element, taskEditComponent.element);
+    };
+
+    taskComponent.element.querySelector('.card__btn--edit').addEventListener('click', () => {
+      replaceCardToForm();
+    });
+
+    taskEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+    });
 
     render(taskComponent, this.#taskListComponent.element);
   };
