@@ -1,10 +1,10 @@
-import {createSiteMenuTemplate} from './view/site-menu.js';
+import SiteMenuView from './view/site-menu.js';
 import {createFilterTemplate} from './view/filter.js';
 import {createTaskTemplate} from './view/task.js';
 import {createTaskEditTemplate} from './view/task-edit.js';
 import {createLoadMoreButtonTemplate} from './view/load-more-button.js';
 import {createBoardTemplate} from './view/board.js';
-import {renderTemplate, RenderPosition} from './render.js';
+import {renderTemplate, renderElement, RenderPosition} from './render.js';
 import {generateTask} from './mock/task.js';
 import {generateFilter} from './mock/filter.js';
 
@@ -17,7 +17,7 @@ const filters = generateFilter(tasks);
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
-renderTemplate(siteHeaderElement, createSiteMenuTemplate(), RenderPosition.BEFOREEND);
+renderElement(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createFilterTemplate(filters), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createBoardTemplate(), RenderPosition.BEFOREEND);
 
