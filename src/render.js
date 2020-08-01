@@ -20,7 +20,7 @@ function createElement(template) {
 // а не просто <a>Link 1</a><a>Link 2</a>
 
 function render(component, container, place = RenderPosition.BEFOREEND) {
-  container.insertAdjacentElement(place, component.getElement());
+  container.insertAdjacentElement(place, component.element);
 }
 
 export {RenderPosition, createElement, render};

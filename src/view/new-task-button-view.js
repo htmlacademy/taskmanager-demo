@@ -5,19 +5,21 @@ function createNewTaskButtonTemplate() {
 }
 
 export default class NewTaskButtonView {
-  getTemplate() {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
     return createNewTaskButtonTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -141,23 +141,26 @@ function createTaskEditTemplate(data) {
 }
 
 export default class TaskEditView {
+  #element = null;
+  #task = null;
+
   constructor({task = BLANK_TASK}) {
-    this.task = task;
+    this.#task = task;
   }
 
-  getTemplate() {
-    return createTaskEditTemplate(this.task);
+  get template() {
+    return createTaskEditTemplate(this.#task);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
