@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 // Функцию для генерации HTML-разметки можно превратить в метод класса,
 // однако делать мы этого не будем, чтобы не раздувать diff изменений
@@ -33,22 +33,8 @@ const createSiteMenuTemplate = () => (
   </section>`
 );
 
-export default class SiteMenuView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SiteMenuView extends AbstractView {
   get template() {
     return createSiteMenuTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
