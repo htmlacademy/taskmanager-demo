@@ -6,6 +6,7 @@ import LoadMoreButtonView from "./view/load-more-button.js";
 import BoardView from "./view/board.js";
 import SortView from "./view/sort.js";
 import TaskListView from "./view/task-list.js";
+import NoTaskView from "./view/no-task.js";
 import {generateTask} from "./mock/task.js";
 import {generateFilter} from "./mock/filter.js";
 import {render, RenderPosition} from "./utils.js";
@@ -58,33 +59,45 @@ render(siteMainElement, new FilterView(filters).getElement(), RenderPosition.BEF
 
 const boardComponent = new BoardView();
 render(siteMainElement, boardComponent.getElement(), RenderPosition.BEFOREEND);
-render(boardComponent.getElement(), new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
-const taskListComponent = new TaskListView();
-render(boardComponent.getElement(), taskListComponent.getElement(), RenderPosition.BEFOREEND);
+// По условию заглушка должна показываться,
+// когда нет задач или все задачи в архиве.
+// Мы могли бы написать:
+// tasks.length === 0 || tasks.every((task) => task.isArchive)
+// Но благодаря тому, что на пустом массиве every вернёт true,
+// мы можем опустить "tasks.length === 0".
+// p.s. А метод some на пустом массиве наборот вернет false
+if (tasks.every((task) => task.isArchive)) {
+  render(boardComponent.getElement(), new NoTaskView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  render(boardComponent.getElement(), new SortView().getElement(), RenderPosition.BEFOREEND);
 
-for (let i = 0; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
-  renderTask(taskListComponent.getElement(), tasks[i]);
-}
+  const taskListComponent = new TaskListView();
+  render(boardComponent.getElement(), taskListComponent.getElement(), RenderPosition.BEFOREEND);
 
-if (tasks.length > TASK_COUNT_PER_STEP) {
-  let renderedTaskCount = TASK_COUNT_PER_STEP;
+  for (let i = 0; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
+    renderTask(taskListComponent.getElement(), tasks[i]);
+  }
 
-  const loadMoreButtonComponent = new LoadMoreButtonView();
+  if (tasks.length > TASK_COUNT_PER_STEP) {
+    let renderedTaskCount = TASK_COUNT_PER_STEP;
 
-  render(boardComponent.getElement(), loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
+    const loadMoreButtonComponent = new LoadMoreButtonView();
 
-  loadMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    tasks
-      .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_PER_STEP)
-      .forEach((task) => renderTask(taskListComponent.getElement(), task));
+    render(boardComponent.getElement(), loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
 
-    renderedTaskCount += TASK_COUNT_PER_STEP;
+    loadMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      tasks
+        .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_PER_STEP)
+        .forEach((task) => renderTask(taskListComponent.getElement(), task));
 
-    if (renderedTaskCount >= tasks.length) {
-      loadMoreButtonComponent.getElement().remove();
-      loadMoreButtonComponent.removeElement();
-    }
-  });
+      renderedTaskCount += TASK_COUNT_PER_STEP;
+
+      if (renderedTaskCount >= tasks.length) {
+        loadMoreButtonComponent.getElement().remove();
+        loadMoreButtonComponent.removeElement();
+      }
+    });
+  }
 }
