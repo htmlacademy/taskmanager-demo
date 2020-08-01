@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {COLORS} from '../const.js';
 import {humanizeTaskDueDate, isTaskRepeating} from '../utils.js';
 
@@ -140,24 +140,15 @@ function createTaskEditTemplate(data) {
   );
 }
 
-export default class TaskEditView {
+export default class TaskEditView extends AbstractView {
+  #task = null;
+
   constructor({task = BLANK_TASK}) {
-    this.task = task;
+    super();
+    this.#task = task;
   }
 
-  getTemplate() {
-    return createTaskEditTemplate(this.task);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTaskEditTemplate(this.#task);
   }
 }
