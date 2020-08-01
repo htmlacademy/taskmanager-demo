@@ -1,5 +1,23 @@
 import {COLORS} from '../const.js';
 import {isTaskRepeating, humanizeTaskDueDate} from '../utils.js';
+import {createElement} from '../render.js';
+
+const BLANK_TASK = {
+  color: COLORS[0],
+  description: '',
+  dueDate: null,
+  repeating: {
+    mo: false,
+    tu: false,
+    we: false,
+    th: false,
+    fr: false,
+    sa: false,
+    su: false,
+  },
+  isArchive: false,
+  isFavorite: false,
+};
 
 const createTaskEditDateTemplate = (dueDate) => (
   `<button class="card__date-deadline-toggle" type="button">
@@ -58,21 +76,8 @@ const createTaskEditColorsTemplate = (currentColor) => (
   >`).join('')
 );
 
-export const createTaskEditTemplate = (task = {}) => {
-  const {
-    color = 'black',
-    description = '',
-    dueDate = null,
-    repeating = {
-      mo: false,
-      tu: false,
-      we: false,
-      th: false,
-      fr: false,
-      sa: false,
-      su: false,
-    },
-  } = task;
+const createTaskEditTemplate = (task) => {
+  const {color, description, dueDate, repeating} = task;
 
   const dateTemplate = createTaskEditDateTemplate(dueDate);
 
@@ -127,3 +132,28 @@ export const createTaskEditTemplate = (task = {}) => {
     </form>
   </article>`;
 };
+
+export default class TaskEditView {
+  #element = null;
+  #task = null;
+
+  constructor(task = BLANK_TASK) {
+    this.#task = task;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTaskEditTemplate(this.#task);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
