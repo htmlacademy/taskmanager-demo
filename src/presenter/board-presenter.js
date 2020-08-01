@@ -6,12 +6,15 @@ import TaskEditView from '../view/task-edit-view.js';
 import LoadMoreButtonView from '../view/load-more-button-view.js';
 import {render} from '../render.js';
 
+const TASK_COUNT_PER_STEP = 8;
+
 export default class BoardPresenter {
   #boardContainer = null;
   #tasksModel = null;
 
   #boardComponent = new BoardView();
   #taskListComponent = new TaskListView();
+  #loadMoreButtonComponent = null;
 
   #boardTasks = [];
 
@@ -31,8 +34,18 @@ export default class BoardPresenter {
       this.#renderTask(this.#boardTasks[i]);
     }
 
-    render(new LoadMoreButtonView(), this.#boardComponent.element);
+    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
+      this.#loadMoreButtonComponent = new LoadMoreButtonView();
+      render(this.#loadMoreButtonComponent, this.#boardComponent.element);
+
+      this.#loadMoreButtonComponent.element.addEventListener('click', this.#loadMoreButtonClickHandler);
+    }
   }
+
+  #loadMoreButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    alert('Works!');
+  };
 
   #renderTask(task) {
     const taskComponent = new TaskView({task});
