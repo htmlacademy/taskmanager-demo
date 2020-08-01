@@ -7,7 +7,8 @@ import {createBoardTemplate} from "./view/board.js";
 import {generateTask} from "./mock/task.js";
 import {generateFilter} from "./mock/filter.js";
 
-const TASK_COUNT = 4;
+const TASK_COUNT = 22;
+const TASK_COUNT_PER_STEP = 8;
 
 const tasks = new Array(TASK_COUNT).fill().map(generateTask);
 const filters = generateFilter(tasks);
@@ -32,4 +33,13 @@ for (let i = 1; i < TASK_COUNT; i++) {
   render(taskListElement, createTaskTemplate(tasks[i]), `beforeend`);
 }
 
-render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
+if (tasks.length > TASK_COUNT_PER_STEP) {
+  render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
+
+  const loadMoreButton = boardElement.querySelector(`.load-more`);
+
+  loadMoreButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    alert('Works!');
+  });
+}
