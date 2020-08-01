@@ -1,0 +1,49 @@
+.ui-blocker {
+  display: none;
+  place-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  cursor: wait;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ui-blocker::before {
+  content: "";
+  display: block;
+  border-radius: 50%;
+  border: 6px solid #4285F4;
+  box-sizing: border-box;
+  animation: sweep 1s linear alternate infinite,
+             rotate 0.8s linear infinite;
+  width: 65px;
+  height: 65px;
+}
+
+.ui-blocker--on {
+  display: grid;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 50% 50%, 0% 0%, 0% 0%, 0% 0%);
+  }
+  50% {
+    clip-path: polygon(0% 0%, 0% 100%, 0% 100%, 50% 50%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 0% 100%, 100% 100%, 50% 50%, 100% 100%, 100% 0%, 0% 0%);
+  }
+}
