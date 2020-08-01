@@ -7,7 +7,7 @@ import BoardView from './view/board-view.js';
 import SortView from './view/sort-view.js';
 import TaskListView from './view/task-list-view.js';
 import NoTaskView from './view/no-task-view.js';
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition, replace, remove} from './utils/render.js';
 import {generateTask} from './mock/task.js';
 import {generateFilter} from './mock/filter.js';
 
@@ -25,11 +25,11 @@ const renderTask = (taskListElement, task) => {
   const taskEditComponent = new TaskEditView(task);
 
   const replaceCardToForm = () => {
-    taskListElement.replaceChild(taskEditComponent.element, taskComponent.element);
+    replace(taskEditComponent, taskComponent);
   };
 
   const replaceFormToCard = () => {
-    taskListElement.replaceChild(taskComponent.element, taskEditComponent.element);
+    replace(taskComponent, taskEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -50,15 +50,15 @@ const renderTask = (taskListElement, task) => {
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(taskListElement, taskComponent.element, RenderPosition.BEFOREEND);
+  render(taskListElement, taskComponent, RenderPosition.BEFOREEND);
 };
 
 const renderBoard = (boardContainer, boardTasks) => {
   const boardComponent = new BoardView();
   const taskListComponent = new TaskListView();
 
-  render(boardContainer, boardComponent.element, RenderPosition.BEFOREEND);
-  render(boardComponent.element, taskListComponent.element, RenderPosition.BEFOREEND);
+  render(boardContainer, boardComponent, RenderPosition.BEFOREEND);
+  render(boardComponent, taskListComponent, RenderPosition.BEFOREEND);
 
   // По условию заглушка должна показываться,
   // когда нет задач или все задачи в архиве.
@@ -68,11 +68,11 @@ const renderBoard = (boardContainer, boardTasks) => {
   // мы можем опустить "tasks.length === 0".
   // p.s. А метод some на пустом массиве наборот вернет false
   if (boardTasks.every((task) => task.isArchive)) {
-    render(boardComponent.element, new NoTaskView().element, RenderPosition.AFTERBEGIN);
+    render(boardComponent, new NoTaskView(), RenderPosition.AFTERBEGIN);
     return;
   }
 
-  render(boardComponent.element, new SortView().element, RenderPosition.AFTERBEGIN);
+  render(boardComponent, new SortView(), RenderPosition.AFTERBEGIN);
 
   boardTasks
     .slice(0, Math.min(tasks.length, TASK_COUNT_PER_STEP))
@@ -83,7 +83,7 @@ const renderBoard = (boardContainer, boardTasks) => {
 
     const loadMoreButtonComponent = new LoadMoreButtonView();
 
-    render(boardComponent.element, loadMoreButtonComponent.element, RenderPosition.BEFOREEND);
+    render(boardComponent, loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
     loadMoreButtonComponent.setClickHandler(() => {
       boardTasks
@@ -93,14 +93,13 @@ const renderBoard = (boardContainer, boardTasks) => {
       renderedTaskCount += TASK_COUNT_PER_STEP;
 
       if (renderedTaskCount >= boardTasks.length) {
-        loadMoreButtonComponent.element.remove();
-        loadMoreButtonComponent.removeElement();
+        remove(loadMoreButtonComponent);
       }
     });
   }
 };
 
-render(siteHeaderElement, new SiteMenuView().element, RenderPosition.BEFOREEND);
-render(siteMainElement, new FilterView(filters).element, RenderPosition.BEFOREEND);
+render(siteHeaderElement, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(siteMainElement, new FilterView(filters), RenderPosition.BEFOREEND);
 
 renderBoard(siteMainElement, tasks);
