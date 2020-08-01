@@ -1,14 +1,14 @@
 import {createElement} from '../render.js';
 
-const createLoadMoreButtonTemplate = () => '<button class="load-more" type="button">load more</button>';
+const createTaskListTemplate = () => '<div class="board__tasks"></div>';
 
-export default class LoadMoreButton {
+export default class TaskList {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createLoadMoreButtonTemplate();
+    return createTaskListTemplate();
   }
 
   getElement() {
