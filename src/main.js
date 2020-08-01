@@ -31,13 +31,23 @@ const renderTask = (taskListElement, task) => {
     taskListElement.replaceChild(taskComponent.element, taskEditComponent.element);
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
   taskComponent.element.querySelector('.card__btn--edit').addEventListener('click', () => {
     replaceCardToForm();
+    document.addEventListener('keydown', onEscKeyDown);
   });
 
   taskEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
 
   render(taskListElement, taskComponent.element, RenderPosition.BEFOREEND);
