@@ -71,23 +71,26 @@ const createTaskTemplate = (task) => {
 };
 
 export default class TaskView {
+  #element = null;
+  #task = null;
+
   constructor(task) {
-    this.task = task;
+    this.#task = task;
   }
 
-  getTemplate() {
-    return createTaskTemplate(this.task);
+  get template() {
+    return createTaskTemplate(this.#task);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
