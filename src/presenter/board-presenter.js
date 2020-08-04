@@ -86,8 +86,8 @@ export default class BoardPresenter {
     }
 
     this.#sortTasks(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this.#clearTaskList();
+    this.#renderTaskList();
   };
 
   #renderSort() {
