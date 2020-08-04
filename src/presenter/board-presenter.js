@@ -16,7 +16,7 @@ export default class BoardPresenter {
   #boardComponent = new BoardView();
   #taskListComponent = new TaskListView();
   #loadMoreButtonComponent = null;
-  #sortComponent = new SortView();
+  #sortComponent = null;
   #noTaskComponent = new NoTaskView();
 
   #boardTasks = [];
@@ -51,7 +51,17 @@ export default class BoardPresenter {
     this.#taskPresenters.get(updatedTask.id).init(updatedTask);
   };
 
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
+
   #renderSort() {
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
 
