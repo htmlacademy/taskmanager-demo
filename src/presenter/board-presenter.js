@@ -6,6 +6,8 @@ import LoadMoreButtonView from '../view/load-more-button-view.js';
 import NoTaskView from '../view/no-task-view.js';
 import TaskPresenter from './task-presenter.js';
 import {updateItem} from '../utils/common.js';
+import {sortTaskUp, sortTaskDown} from '../utils/task.js';
+import {SortType} from '../const.js';
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -22,6 +24,8 @@ export default class BoardPresenter {
   #boardTasks = [];
   #renderedTaskCount = TASK_COUNT_PER_STEP;
   #taskPresenters = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedBoardTasks = [];
 
   constructor({boardContainer, tasksModel}) {
     this.#boardContainer = boardContainer;
@@ -30,6 +34,10 @@ export default class BoardPresenter {
 
   init() {
     this.#boardTasks = [...this.#tasksModel.tasks];
+    // 1. В отличии от сортировки по любому параметру,
+    // исходный порядок можно сохранить только одним способом -
+    // сохранив исходный массив:
+    this.#sourcedBoardTasks = [...this.#tasksModel.tasks];
 
     this.#renderBoard();
   }
@@ -48,11 +56,36 @@ export default class BoardPresenter {
 
   #handleTaskChange = (updatedTask) => {
     this.#boardTasks = updateItem(this.#boardTasks, updatedTask);
+    this.#sourcedBoardTasks = updateItem(this.#sourcedBoardTasks, updatedTask);
     this.#taskPresenters.get(updatedTask.id).init(updatedTask);
   };
 
+  #sortTasks(sortType) {
+    // 2. Этот исходный массив задач необходим,
+    // потому что для сортировки мы будем мутировать
+    // массив в свойстве _boardTasks
+    switch (sortType) {
+      case SortType.DATE_UP:
+        this.#boardTasks.sort(sortTaskUp);
+        break;
+      case SortType.DATE_DOWN:
+        this.#boardTasks.sort(sortTaskDown);
+        break;
+      default:
+        // 3. А когда пользователь захочет "вернуть всё, как было",
+        // мы просто запишем в _boardTasks исходный массив
+        this.#boardTasks = [...this.#sourcedBoardTasks];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortTasks(sortType);
     // - Очищаем список
     // - Рендерим список заново
   };
