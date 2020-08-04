@@ -44,8 +44,15 @@ export default class BoardPresenter {
     this.#taskPresenter.get(updatedTask.id).init(updatedTask);
   }
 
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  }
+
   #renderSort = () => {
     render(this.#boardComponent, this.#sortComponent, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderTask = (task) => {
