@@ -99,6 +99,14 @@ export default class BoardPresenter {
     });
   }
 
+  #renderTaskList = () => {
+    this.#renderTasks(0, Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP));
+
+    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
+      this.#renderLoadMoreButton();
+    }
+  }
+
   #renderBoard = () => {
     if (this.#boardTasks.every((task) => task.isArchive)) {
       this.#renderNoTasks();
@@ -106,11 +114,6 @@ export default class BoardPresenter {
     }
 
     this.#renderSort();
-
-    this.#renderTasks(0, Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP));
-
-    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
-      this.#renderLoadMoreButton();
-    }
+    this.#renderTaskList();
   }
 }
