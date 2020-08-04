@@ -66,8 +66,8 @@ export default class Board {
     }
 
     this._sortTasks(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this._clearTaskList();
+    this._renderTaskList();
   }
 
   _renderSort() {
@@ -131,6 +131,11 @@ export default class Board {
     render(this._boardComponent, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
     this._loadMoreButtonComponent.setClickHandler(this._handleLoadMoreButtonClick);
+  }
+
+  _clearTaskList() {
+    this._taskListComponent.getElement().innerHTML = ``;
+    this._renderedTaskCount = TASK_COUNT_PER_STEP;
   }
 
   _renderTaskList() {
