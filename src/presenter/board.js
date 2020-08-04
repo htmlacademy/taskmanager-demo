@@ -79,8 +79,8 @@ export default class Board {
     }
 
     this._sortTasks(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this._clearTaskList();
+    this._renderTaskList();
   }
 
   _renderSort() {
