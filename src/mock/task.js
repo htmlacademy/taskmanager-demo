@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import {getRandomArrayElement} from '../utils/common.js';
 import {COLORS} from '../const.js';
 
@@ -69,7 +70,10 @@ const mockTasks = [
 ];
 
 function getRandomTask() {
-  return getRandomArrayElement(mockTasks);
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(mockTasks)
+  };
 }
 
 export {getRandomTask};
