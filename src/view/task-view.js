@@ -71,14 +71,22 @@ function createTaskTemplate(task) {
 export default class TaskView extends AbstractView {
   #task = null;
   #handleEditClick = null;
+  #handleFavoriteClick = null;
+  #handleArchiveClick = null;
 
-  constructor({task, onEditClick}) {
+  constructor({task, onEditClick, onFavoriteClick, onArchiveClick}) {
     super();
     this.#task = task;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
+    this.#handleArchiveClick = onArchiveClick;
 
     this.element.querySelector('.card__btn--edit')
       .addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.card__btn--favorites')
+      .addEventListener('click', this.#favoriteClickHandler);
+    this.element.querySelector('.card__btn--archive')
+      .addEventListener('click', this.#archiveClickHandler);
   }
 
   get template() {
@@ -88,5 +96,15 @@ export default class TaskView extends AbstractView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
+  };
+
+  #archiveClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleArchiveClick();
   };
 }
