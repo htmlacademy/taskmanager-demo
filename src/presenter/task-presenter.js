@@ -4,14 +4,16 @@ import TaskEditView from '../view/task-edit-view.js';
 
 export default class TaskPresenter {
   #taskListContainer = null;
+  #changeData = null;
 
   #taskComponent = null;
   #taskEditComponent = null;
 
   #task = null;
 
-  constructor(taskListContainer) {
+  constructor(taskListContainer, changeData) {
     this.#taskListContainer = taskListContainer;
+    this.#changeData = changeData;
   }
 
   init = (task) => {
@@ -24,6 +26,8 @@ export default class TaskPresenter {
     this.#taskEditComponent = new TaskEditView(task);
 
     this.#taskComponent.setEditClickHandler(this.#handleEditClick);
+    this.#taskComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#taskComponent.setArchiveClickHandler(this.#handleArchiveClick);
     this.#taskEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
 
     if (prevTaskComponent === null || prevTaskEditComponent === null) {
@@ -71,7 +75,16 @@ export default class TaskPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFavoriteClick = () => {
+    this.#changeData({...this.#task, isFavorite: !this.#task.isFavorite});
+  };
+
+  #handleArchiveClick = () => {
+    this.#changeData({...this.#task, isArchive: !this.#task.isArchive});
+  };
+
+  #handleFormSubmit = (task) => {
+    this.#changeData(task);
     this.#replaceFormToCard();
   };
 }
