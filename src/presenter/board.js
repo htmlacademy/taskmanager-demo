@@ -12,6 +12,7 @@ export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._renderedTaskCount = TASK_COUNT_PER_STEP;
+    this._taskPresenter = {};
 
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
@@ -38,6 +39,7 @@ export default class Board {
   _renderTask(task) {
     const taskPresenter = new TaskPresenter(this._taskListComponent);
     taskPresenter.init(task);
+    this._taskPresenter[task.id] = taskPresenter;
   }
 
   _renderTasks(from, to) {
@@ -63,6 +65,15 @@ export default class Board {
     render(this._boardComponent, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
     this._loadMoreButtonComponent.setClickHandler(this._handleLoadMoreButtonClick);
+  }
+
+  _clearTaskList() {
+    Object
+      .values(this._taskPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._taskPresenter = {};
+    this._renderedTaskCount = TASK_COUNT_PER_STEP;
+    remove(this._loadMoreButtonComponent);
   }
 
   _renderTaskList() {
