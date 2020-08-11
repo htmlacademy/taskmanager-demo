@@ -1,6 +1,7 @@
 import AbstractView from "./abstract.js";
 import {COLORS} from "../const.js";
 import {isTaskExpired, isTaskRepeating, humanizeTaskDueDate} from "../utils/task.js";
+import {renderTemplate, RenderPosition} from "../utils/render.js";
 
 const BLANK_TASK = {
   color: COLORS[0],
@@ -19,19 +20,19 @@ const BLANK_TASK = {
   isFavorite: false
 };
 
-const createTaskEditDateTemplate = (dueDate) => {
+const createTaskEditDateTemplate = (dueDate, isDueDate) => {
   return `<button class="card__date-deadline-toggle" type="button">
-      date: <span class="card__date-status">${dueDate !== null ? `yes` : `no`}</span>
+      date: <span class="card__date-status">${isDueDate ? `yes` : `no`}</span>
     </button>
 
-    ${dueDate !== null ? `<fieldset class="card__date-deadline">
+    ${isDueDate ? `<fieldset class="card__date-deadline">
       <label class="card__input-deadline-wrap">
         <input
           class="card__date"
           type="text"
           placeholder=""
           name="date"
-          value="${humanizeTaskDueDate(dueDate)}"
+          value="${dueDate !== null ? humanizeTaskDueDate(dueDate) : ``}"
         />
       </label>
     </fieldset>` : ``}
@@ -76,13 +77,14 @@ const createTaskEditColorsTemplate = (currentColor) => {
   >`).join(``);
 };
 
-const createTaskEditTemplate = (task) => {
+const createTaskEditTemplate = (task, option) => {
   const {color, description, dueDate, repeating} = task;
+  const {isDueDate} = option;
 
   const deadlineClassName = isTaskExpired(dueDate)
     ? `card--deadline`
     : ``;
-  const dateTemplate = createTaskEditDateTemplate(dueDate);
+  const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate);
 
   const repeatingClassName = isTaskRepeating(repeating)
     ? `card--repeat`
@@ -140,12 +142,25 @@ export default class TaskEdit extends AbstractView {
   constructor(task) {
     super();
     this._task = task || BLANK_TASK;
+    this._option = {
+      isDueDate: Boolean(this._task.dueDate)
+    };
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+
+    this._enableDueDateToggler();
   }
 
   getTemplate() {
-    return createTaskEditTemplate(this._task);
+    return createTaskEditTemplate(this._task, this._option);
+  }
+
+  _enableDueDateToggler() {
+    // Необходимо добавить обработчик,
+    // который будет скрывать/показывать поля выбора даты.
+    // Нюанс: обработчик будет добавлен на элемент,
+    // который придется изменять, а значит нужно
+    // будет перенавешивать обработчик
   }
 
   _formSubmitHandler(evt) {
