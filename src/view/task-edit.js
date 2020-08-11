@@ -39,12 +39,12 @@ const createTaskEditDateTemplate = (dueDate, isDueDate) => {
   `;
 };
 
-const createTaskEditRepeatingTemplate = (repeating) => {
+const createTaskEditRepeatingTemplate = (repeating, isRepeating) => {
   return `<button class="card__repeat-toggle" type="button">
-    repeat:<span class="card__repeat-status">${isTaskRepeating(repeating) ? `yes` : `no`}</span>
+    repeat:<span class="card__repeat-status">${isRepeating ? `yes` : `no`}</span>
   </button>
 
-  ${isTaskRepeating(repeating) ? `<fieldset class="card__repeat-days">
+  ${isRepeating ? `<fieldset class="card__repeat-days">
     <div class="card__repeat-days-inner">
       ${Object.entries(repeating).map(([day, repeat]) => `<input
         class="visually-hidden card__repeat-day-input"
@@ -79,17 +79,17 @@ const createTaskEditColorsTemplate = (currentColor) => {
 
 const createTaskEditTemplate = (task, option) => {
   const {color, description, dueDate, repeating} = task;
-  const {isDueDate} = option;
+  const {isDueDate, isRepeating} = option;
 
   const deadlineClassName = isTaskExpired(dueDate)
     ? `card--deadline`
     : ``;
   const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate);
 
-  const repeatingClassName = isTaskRepeating(repeating)
+  const repeatingClassName = isRepeating
     ? `card--repeat`
     : ``;
-  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating);
+  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating, isRepeating);
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
@@ -143,12 +143,14 @@ export default class TaskEdit extends AbstractView {
     super();
     this._task = task || BLANK_TASK;
     this._option = {
-      isDueDate: Boolean(this._task.dueDate)
+      isDueDate: Boolean(this._task.dueDate),
+      isRepeating: isTaskRepeating(this._task.repeating)
     };
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
     this._enableDueDateToggler();
+    this._enableRepeatingToggler();
   }
 
   getTemplate() {
@@ -188,6 +190,43 @@ export default class TaskEdit extends AbstractView {
     element
       .querySelector(`.card__date-deadline-toggle`)
       .addEventListener(`click`, dueDateToggleHandler);
+  }
+
+  _enableRepeatingToggler() {
+    const element = this.getElement();
+
+    const repeatingToggleHandler = (evt) => {
+      evt.preventDefault();
+
+      element.querySelector(`.card__repeat-toggle`).remove();
+
+      if (element.querySelector(`.card__repeat-days`)) {
+        element.querySelector(`.card__repeat-days`).remove();
+      }
+
+      // В случае с днями повторения нужно ещё позаботиться
+      // о смене класса компонента формы,
+      // чтобы полоса для повторяющихся задач была волнистой
+      if (!this._option.isRepeating) {
+        element.classList.add(`card--repeat`);
+      } else {
+        element.classList.remove(`card--repeat`);
+      }
+
+      const repeatingTemplate = createTaskEditRepeatingTemplate(this._task.repeating, !this._option.isRepeating);
+
+      renderTemplate(element.querySelector(`.card__dates`), repeatingTemplate, RenderPosition.BEFOREEND);
+
+      this._option.isRepeating = !this._option.isRepeating;
+
+      element
+        .querySelector(`.card__repeat-toggle`)
+        .addEventListener(`click`, repeatingToggleHandler);
+    };
+
+    element
+      .querySelector(`.card__repeat-toggle`)
+      .addEventListener(`click`, repeatingToggleHandler);
   }
 
   _formSubmitHandler(evt) {
