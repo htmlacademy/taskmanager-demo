@@ -156,11 +156,38 @@ export default class TaskEdit extends AbstractView {
   }
 
   _enableDueDateToggler() {
-    // Необходимо добавить обработчик,
-    // который будет скрывать/показывать поля выбора даты.
-    // Нюанс: обработчик будет добавлен на элемент,
-    // который придется изменять, а значит нужно
-    // будет перенавешивать обработчик
+    const element = this.getElement();
+
+    const dueDateToggleHandler = (evt) => {
+      evt.preventDefault();
+
+      // 1. Удаляем старую разметку
+      element.querySelector(`.card__date-deadline-toggle`).remove();
+
+      // Поле выбора может быть, а может не быть,
+      // чтобы не нарваться на ошибку, удаление оборачиваем в условие
+      if (element.querySelector(`.card__date-deadline`)) {
+        element.querySelector(`.card__date-deadline`).remove();
+      }
+
+      // 2. Создаем и отрисовываем новую разметку
+      // Новая разметка должна быть для противоположного признака isDueDate,
+      // ведь мы реализовываем переключатель
+      const dateTemplate = createTaskEditDateTemplate(this._task.dueDate, !this._option.isDueDate);
+
+      renderTemplate(element.querySelector(`.card__dates`), dateTemplate, RenderPosition.AFTERBEGIN);
+
+      // 3. Перезаписываем признак в _option
+      this._option.isDueDate = !this._option.isDueDate;
+
+      element
+        .querySelector(`.card__date-deadline-toggle`)
+        .addEventListener(`click`, dueDateToggleHandler);
+    };
+
+    element
+      .querySelector(`.card__date-deadline-toggle`)
+      .addEventListener(`click`, dueDateToggleHandler);
   }
 
   _formSubmitHandler(evt) {
