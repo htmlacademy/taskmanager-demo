@@ -147,6 +147,12 @@ export default class TaskEditView extends SmartView {
     return createTaskEditTemplate(this._data);
   }
 
+  reset = (task) => {
+    this.updateData(
+      TaskEditView.parseTaskToData(task),
+    );
+  }
+
   restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
