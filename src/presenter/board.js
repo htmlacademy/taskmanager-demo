@@ -22,6 +22,7 @@ export default class Board {
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
     this._handleTaskChange = this._handleTaskChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
   }
 
@@ -34,6 +35,10 @@ export default class Board {
     this._renderBoard();
   }
 
+  _handleModeChange() {
+    this._taskPresenter.forEach((presenter) => presenter.resetView());
+  }
+
   _handleTaskChange(updatedTask) {
     this._boardTasks = updateItem(this._boardTasks, updatedTask);
     this._taskPresenter.get(updatedTask.id).init(updatedTask);
@@ -44,7 +49,7 @@ export default class Board {
   }
 
   _renderTask(task) {
-    const taskPresenter = new TaskPresenter(this._taskListComponent, this._handleTaskChange);
+    const taskPresenter = new TaskPresenter(this._taskListComponent, this._handleTaskChange, this._handleModeChange);
     taskPresenter.init(task);
     this._taskPresenter.set(task.id, taskPresenter);
   }
