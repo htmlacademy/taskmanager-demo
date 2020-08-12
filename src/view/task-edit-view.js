@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {COLORS} from '../const.js';
 import {humanizeTaskDueDate, isTaskRepeating} from '../utils/task.js';
 
@@ -19,13 +19,13 @@ const BLANK_TASK = {
   isFavorite: false,
 };
 
-function createTaskEditDateTemplate(dueDate) {
+function createTaskEditDateTemplate(dueDate, isDueDate) {
   return (
     `<button class="card__date-deadline-toggle" type="button">
-      date: <span class="card__date-status">${dueDate !== null ? 'yes' : 'no'}</span>
+      date: <span class="card__date-status">${isDueDate ? 'yes' : 'no'}</span>
     </button>
 
-    ${dueDate !== null ? `<fieldset class="card__date-deadline">
+    ${isDueDate ? `<fieldset class="card__date-deadline">
       <label class="card__input-deadline-wrap">
         <input
           class="card__date"
@@ -40,13 +40,13 @@ function createTaskEditDateTemplate(dueDate) {
   );
 }
 
-function createTaskEditRepeatingTemplate(repeating) {
+function createTaskEditRepeatingTemplate(repeating, isRepeating) {
   return (
     `<button class="card__repeat-toggle" type="button">
-      repeat:<span class="card__repeat-status">${isTaskRepeating(repeating) ? 'yes' : 'no'}</span>
+      repeat:<span class="card__repeat-status">${isRepeating ? 'yes' : 'no'}</span>
     </button>
 
-  ${isTaskRepeating(repeating) ? `<fieldset class="card__repeat-days">
+  ${isRepeating ? `<fieldset class="card__repeat-days">
     <div class="card__repeat-days-inner">
       ${Object.entries(repeating).map(([day, repeat]) => `<input
         class="visually-hidden card__repeat-day-input"
@@ -81,15 +81,15 @@ function createTaskEditColorsTemplate(currentColor) {
 }
 
 function createTaskEditTemplate(data) {
-  const {color, description, dueDate, repeating} = data;
+  const {color, description, dueDate, repeating, isDueDate, isRepeating} = data;
 
-  const dateTemplate = createTaskEditDateTemplate(dueDate);
+  const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate);
 
-  const repeatingClassName = isTaskRepeating(repeating)
+  const repeatingClassName = isRepeating
     ? 'card--repeat'
     : '';
 
-  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating);
+  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating, isRepeating);
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
@@ -140,13 +140,12 @@ function createTaskEditTemplate(data) {
   );
 }
 
-export default class TaskEditView extends AbstractView {
-  #task = null;
+export default class TaskEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
 
   constructor({task = BLANK_TASK, onFormSubmit}) {
     super();
-    this.#task = task;
+    this._setState(TaskEditView.parseTaskToState(task));
     this.#handleFormSubmit = onFormSubmit;
 
     this.element.querySelector('form')
@@ -154,11 +153,43 @@ export default class TaskEditView extends AbstractView {
   }
 
   get template() {
-    return createTaskEditTemplate(this.#task);
+    return createTaskEditTemplate(this._state);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#task);
+    this.#handleFormSubmit(TaskEditView.parseStateToTask(this._state));
   };
+
+  static parseTaskToState(task) {
+    return {...task,
+      isDueDate: task.dueDate !== null,
+      isRepeating: isTaskRepeating(task.repeating),
+    };
+  }
+
+  static parseStateToTask(state) {
+    const task = {...state};
+
+    if (!task.isDueDate) {
+      task.dueDate = null;
+    }
+
+    if (!task.isRepeating) {
+      task.repeating = {
+        mo: false,
+        tu: false,
+        we: false,
+        th: false,
+        fr: false,
+        sa: false,
+        su: false,
+      };
+    }
+
+    delete task.isDueDate;
+    delete task.isRepeating;
+
+    return task;
+  }
 }
