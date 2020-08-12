@@ -138,10 +138,7 @@ export default class TaskEditView extends AbstractView {
     super();
     this._data = TaskEditView.parseTaskToData(task);
 
-    this.element.querySelector('.card__date-deadline-toggle')
-      .addEventListener('click', this.#dueDateToggleHandler);
-    this.element.querySelector('.card__repeat-toggle')
-      .addEventListener('click', this.#repeatingToggleHandler);
+    this.#setInnerHandlers();
   }
 
   get template() {
@@ -166,11 +163,25 @@ export default class TaskEditView extends AbstractView {
     const newElement = this.element;
 
     parent.replaceChild(newElement, prevElement);
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.card__date-deadline-toggle')
+      .addEventListener('click', this.#dueDateToggleHandler);
+    this.element.querySelector('.card__repeat-toggle')
+      .addEventListener('click', this.#repeatingToggleHandler);
   }
 
   #dueDateToggleHandler = (evt) => {
