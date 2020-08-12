@@ -143,6 +143,16 @@ export default class TaskEditView extends AbstractView {
     return createTaskEditTemplate(this._data);
   }
 
+  updateElement = () => {
+    const prevElement = this.element;
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.element;
+
+    parent.replaceChild(newElement, prevElement);
+  }
+
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
