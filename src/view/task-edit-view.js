@@ -93,6 +93,8 @@ function createTaskEditTemplate(data) {
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
+  const isSubmitDisabled = isRepeating && !isTaskRepeating(repeating);
+
   return (
     `<article class="card card--edit card--${color} ${repeatingClassName}">
       <form class="card__form" method="get">
@@ -131,7 +133,7 @@ function createTaskEditTemplate(data) {
           </div>
 
           <div class="card__status-btns">
-            <button class="card__save" type="submit">save</button>
+            <button class="card__save" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>save</button>
             <button class="card__delete" type="button">delete</button>
           </div>
         </div>
@@ -164,7 +166,21 @@ export default class TaskEditView extends AbstractStatefulView {
       .addEventListener('click', this.#repeatingToggleHandler);
     this.element.querySelector('.card__text')
       .addEventListener('input', this.#descriptionInputHandler);
+    this.element.querySelector('.card__colors-wrap')
+      .addEventListener('change', this.#colorChangeHandler);
+
+    if (this._state.isRepeating) {
+      this.element.querySelector('.card__repeat-days-inner')
+        .addEventListener('change', this.#repeatingChangeHandler);
+    }
   }
+
+  #colorChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      color: evt.target.value,
+    });
+  };
 
   #descriptionInputHandler = (evt) => {
     evt.preventDefault();
@@ -173,22 +189,35 @@ export default class TaskEditView extends AbstractStatefulView {
     });
   };
 
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormSubmit(TaskEditView.parseStateToTask(this._state));
-  };
-
   #dueDateToggleHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       isDueDate: !this._state.isDueDate,
+      // Логика следующая: если выбор даты нужно показать,
+      // то есть когда "!this._state.isDueDate === true",
+      // тогда isRepeating должно быть строго false.
+      isRepeating: !this._state.isDueDate ? false : this._state.isRepeating,
     });
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit(TaskEditView.parseStateToTask(this._state));
   };
 
   #repeatingToggleHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       isRepeating: !this._state.isRepeating,
+      // Аналогично, но наоборот, для повторения
+      isDueDate: !this._state.isRepeating ? false : this._state.isDueDate,
+    });
+  };
+
+  #repeatingChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      repeating: {...this._state.repeating, [evt.target.value]: evt.target.checked},
     });
   };
 
