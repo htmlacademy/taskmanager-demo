@@ -139,6 +139,7 @@ export default class TaskEdit extends AbstractView {
     this._data = TaskEdit.parseTaskToData(task);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
     this._dueDateToggleHandler = this._dueDateToggleHandler.bind(this);
     this._repeatingToggleHandler = this._repeatingToggleHandler.bind(this);
 
@@ -149,7 +150,7 @@ export default class TaskEdit extends AbstractView {
     return createTaskEditTemplate(this._data);
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -159,6 +160,10 @@ export default class TaskEdit extends AbstractView {
         this._data,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -187,6 +192,9 @@ export default class TaskEdit extends AbstractView {
     this.getElement()
       .querySelector(`.card__repeat-toggle`)
       .addEventListener(`click`, this._repeatingToggleHandler);
+    this.getElement()
+      .querySelector(`.card__text`)
+      .addEventListener(`input`, this._descriptionInputHandler);
   }
 
   _dueDateToggleHandler(evt) {
@@ -201,6 +209,13 @@ export default class TaskEdit extends AbstractView {
     this.updateData({
       isRepeating: !this._data.isRepeating
     });
+  }
+
+  _descriptionInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      description: evt.target.value
+    }, true);
   }
 
   _formSubmitHandler(evt) {
