@@ -91,7 +91,7 @@ const createTaskEditTemplate = (data) => {
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
-  const isSubmitDisabled = isRepeating && !isTaskRepeating(repeating);
+  const isSubmitDisabled = (isDueDate && dueDate === null) || (isRepeating && !isTaskRepeating(repeating));
 
   return `<article class="card card--edit card--${color} ${repeatingClassName}">
     <form class="card__form" method="get">
@@ -153,6 +153,7 @@ export default class TaskEdit extends SmartView {
     this._colorChangeHandler = this._colorChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   // Перегружаем метод родителя removeElement,
@@ -178,6 +179,7 @@ export default class TaskEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
