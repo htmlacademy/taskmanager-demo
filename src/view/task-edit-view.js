@@ -96,7 +96,7 @@ function createTaskEditTemplate(data) {
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
-  const isSubmitDisabled = isRepeating && !isTaskRepeating(repeating);
+  const isSubmitDisabled = (isDueDate && dueDate === null) || (isRepeating && !isTaskRepeating(repeating));
 
   return (
     `<article class="card card--edit card--${color} ${repeatingClassName}">
@@ -194,6 +194,8 @@ export default class TaskEditView extends AbstractStatefulView {
       this.element.querySelector('.card__repeat-days-inner')
         .addEventListener('change', this.#repeatingChangeHandler);
     }
+
+    this.#setDatepicker();
   }
 
   #colorChangeHandler = (evt) => {
