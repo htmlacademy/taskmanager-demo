@@ -91,7 +91,7 @@ const createTaskEditTemplate = (data) => {
 
   const colorsTemplate = createTaskEditColorsTemplate(color);
 
-  const isSubmitDisabled = isRepeating && !isTaskRepeating(repeating);
+  const isSubmitDisabled = (isDueDate && dueDate === null) || (isRepeating && !isTaskRepeating(repeating));
 
   return `<article class="card card--edit card--${color} ${repeatingClassName}">
     <form class="card__form" method="get">
@@ -146,6 +146,7 @@ export default class TaskEditView extends SmartView {
     this._data = TaskEditView.parseTaskToData(task);
 
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
@@ -171,6 +172,7 @@ export default class TaskEditView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
