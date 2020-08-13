@@ -10,9 +10,11 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "css-loader": "5.0.1",
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "4.0.2",
     "nanoid": "3.1.22",
+    "style-loader": "2.0.0",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
@@ -21,6 +23,7 @@
     "node": "12"
   },
   "dependencies": {
-    "dayjs": "1.9.5"
+    "dayjs": "1.9.5",
+    "flatpickr": "4.6.6"
   }
 }
