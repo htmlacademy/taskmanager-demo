@@ -13,6 +13,7 @@ const TASK_COUNT_PER_STEP = 8;
 
 export default class BoardPresenter {
   #boardContainer = null;
+  #tasksModel = null;
 
   #boardComponent = new BoardView();
   #sortComponent = new SortView();
@@ -26,8 +27,13 @@ export default class BoardPresenter {
   #currentSortType = SortType.DEFAULT;
   #sourcedBoardTasks = [];
 
-  constructor(boardContainer) {
+  constructor(boardContainer, tasksModel) {
     this.#boardContainer = boardContainer;
+    this.#tasksModel = tasksModel;
+  }
+
+  get tasks() {
+    return this.#tasksModel.tasks;
   }
 
   init = (boardTasks) => {
