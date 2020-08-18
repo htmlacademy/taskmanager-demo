@@ -32,6 +32,10 @@ export default class BoardPresenter {
     this.#tasksModel = tasksModel;
   }
 
+  get tasks() {
+    return this.#tasksModel.tasks;
+  }
+
   init() {
     this.#boardTasks = [...this.#tasksModel.tasks];
     // 1. В отличии от сортировки по любому параметру,
