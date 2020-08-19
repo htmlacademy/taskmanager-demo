@@ -9,7 +9,7 @@ import StatisticsComponent from "./components/statistics.js";
 import TasksModel from "./models/tasks.js";
 import {render, RenderPosition} from "./utils/render.js";
 
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
+const AUTHORIZATION = `Basic dX1dxc23kBwYX3Nzd29yZAo=`;
 const END_POINT = `https://11.ecmascript.pages.academy/task-manager`;
 const STORE_PREFIX = `taskmanager-localstorage`;
 const STORE_VER = `v1`;
@@ -68,12 +68,13 @@ apiWithProvider.getTasks()
   });
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      // Действие, в случае успешной регистрации ServiceWorker
-    }).catch(() => {
-      // Действие, в случае ошибки при регистрации ServiceWorker
-  });
+  // Temporary disable for demo
+  // navigator.serviceWorker.register(`/sw.js`)
+  //   .then(() => {
+  //     // Действие, в случае успешной регистрации ServiceWorker
+  //   }).catch(() => {
+  //     // Действие, в случае ошибки при регистрации ServiceWorker
+  // });
 });
 
 window.addEventListener(`online`, () => {
