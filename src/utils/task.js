@@ -54,6 +54,4 @@ export const sortTaskDown = (taskA, taskB) => {
   return dayjs(taskB.dueDate).diff(dayjs(taskA.dueDate));
 };
 
-export const isDatesEqual = (dateA, dateB) => {
-  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
-};
+export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
