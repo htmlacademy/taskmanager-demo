@@ -15,10 +15,10 @@ export default class BoardPresenter {
   #tasksModel = null;
 
   #boardComponent = new BoardView();
-  #sortComponent = new SortView();
   #taskListComponent = new TaskListView();
   #noTaskComponent = new NoTaskView();
-  #loadMoreButtonComponent = new LoadMoreButtonView();
+  #sortComponent = null;
+  #loadMoreButtonComponent = null;
 
   #renderedTaskCount = TASK_COUNT_PER_STEP;
   #taskPresenter = new Map();
@@ -68,18 +68,17 @@ export default class BoardPresenter {
   }
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
-        this._taskPresenter.get(data.id).init(data);
+        this.#taskPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
+        this.#clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        this.#renderBoard();
         break;
     }
   }
@@ -90,13 +89,15 @@ export default class BoardPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearTaskList();
-    this.#renderTaskList();
+    this.#clearBoard({resetRenderedTaskCount: true});
+    this.#renderBoard();
   }
 
   #renderSort = () => {
-    render(this.#boardComponent, this.#sortComponent, RenderPosition.AFTERBEGIN);
+    this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+
+    render(this.#boardComponent, this.#sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   #renderTask = (task) => {
@@ -127,9 +128,10 @@ export default class BoardPresenter {
   }
 
   #renderLoadMoreButton = () => {
-    render(this.#boardComponent, this.#loadMoreButtonComponent, RenderPosition.BEFOREEND);
-
+    this.#loadMoreButtonComponent = new LoadMoreButtonView();
     this.#loadMoreButtonComponent.setClickHandler(this.#handleLoadMoreButtonClick);
+
+    render(this.#boardComponent, this.#loadMoreButtonComponent, RenderPosition.BEFOREEND);
   }
 
   #clearTaskList = () => {
@@ -150,13 +152,49 @@ export default class BoardPresenter {
     }
   }
 
+  #clearBoard = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
+    const taskCount = this.tasks.length;
+
+    this.#taskPresenter.forEach((presenter) => presenter.destroy());
+    this.#taskPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noTaskComponent);
+    remove(this.#loadMoreButtonComponent);
+
+    if (resetRenderedTaskCount) {
+      this.#renderedTaskCount = TASK_COUNT_PER_STEP;
+    } else {
+      // На случай, если перерисовка доски вызвана
+      // уменьшением количества задач (например, удаление или перенос в архив)
+      // нужно скорректировать число показанных задач
+      this.#renderedTaskCount = Math.min(taskCount, this.#renderedTaskCount);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+  }
+
   #renderBoard = () => {
-    if (this.tasks.every((task) => task.isArchive)) {
+    const tasks = this.tasks;
+    const taskCount = tasks.length;
+
+    if (taskCount === 0) {
       this.#renderNoTasks();
       return;
     }
 
     this.#renderSort();
-    this.#renderTaskList();
+
+    // Теперь, когда _renderBoard рендерит доску не только на старте,
+    // но и по ходу работы приложения, нужно заменить
+    // константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
+    // чтобы в случае перерисовки сохранить N-показанных карточек
+    this.#renderTasks(tasks.slice(0, Math.min(taskCount, this.#renderedTaskCount)));
+
+    if (taskCount > this.#renderedTaskCount) {
+      this.#renderLoadMoreButton();
+    }
   }
 }
