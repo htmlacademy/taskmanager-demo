@@ -13,14 +13,27 @@ const boardPresenter = new BoardPresenter({
   boardContainer: siteMainElement,
   tasksModel,
   filterModel,
+  onNewTaskDestroy: handleNewTaskFormClose
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: siteMainElement,
   filterModel,
   tasksModel
 });
+const newTaskButtonComponent = new NewTaskButtonView({
+  onClick: handleNewTaskButtonClick
+});
 
-render(new NewTaskButtonView(), siteHeaderElement);
+function handleNewTaskFormClose() {
+  newTaskButtonComponent.element.disabled = false;
+}
+
+function handleNewTaskButtonClick() {
+  boardPresenter.createTask();
+  newTaskButtonComponent.element.disabled = true;
+}
+
+render(newTaskButtonComponent, siteHeaderElement);
 
 filterPresenter.init();
 boardPresenter.init();
