@@ -10,7 +10,7 @@ const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
 const tasksModel = new TasksModel();
 const filterModel = new FilterModel();
-const boardPresenter = new BoardPresenter(siteMainElement, tasksModel);
+const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, tasksModel);
 
 render(new NewTaskButtonView(), siteHeaderElement);
