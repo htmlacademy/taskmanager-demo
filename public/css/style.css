@@ -160,6 +160,10 @@ body {
   opacity: 0.7;
 }
 
+.board__filter--active {
+  font-weight: bold;
+}
+
 .board__tasks {
   display: flex;
   flex-flow: row wrap;
