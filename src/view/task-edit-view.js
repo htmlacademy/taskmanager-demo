@@ -147,12 +147,14 @@ function createTaskEditTemplate(data) {
 
 export default class TaskEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
+  #handleDeleteClick = null;
   #datepicker = null;
 
-  constructor({task = BLANK_TASK, onFormSubmit}) {
+  constructor({task = BLANK_TASK, onFormSubmit, onDeleteClick}) {
     super();
     this._setState(TaskEditView.parseTaskToState(task));
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -189,6 +191,9 @@ export default class TaskEditView extends AbstractStatefulView {
       .addEventListener('input', this.#descriptionInputHandler);
     this.element.querySelector('.card__colors-wrap')
       .addEventListener('change', this.#colorChangeHandler);
+    this.element.querySelector('.card__delete')
+      .addEventListener('click', this.#formDeleteClickHandler);
+
 
     if (this._state.isRepeating) {
       this.element.querySelector('.card__repeat-days-inner')
@@ -264,6 +269,11 @@ export default class TaskEditView extends AbstractStatefulView {
       );
     }
   }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(TaskEditView.parseStateToTask(this._state));
+  };
 
   static parseTaskToState(task) {
     return {...task,
