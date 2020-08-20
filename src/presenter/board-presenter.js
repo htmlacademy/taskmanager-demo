@@ -27,6 +27,8 @@ export default class BoardPresenter {
   constructor({boardContainer, tasksModel}) {
     this.#boardContainer = boardContainer;
     this.#tasksModel = tasksModel;
+
+    this.#tasksModel.addObserver(this.#handleModelEvent);
   }
 
   get tasks() {
@@ -61,9 +63,20 @@ export default class BoardPresenter {
     this.#taskPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleTaskChange = (updatedTask) => {
-    // Здесь будем вызывать обновление модели
-    this.#taskPresenters.get(updatedTask.id).init(updatedTask);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -87,7 +100,7 @@ export default class BoardPresenter {
   #renderTask(task) {
     const taskPresenter = new TaskPresenter({
       taskListContainer: this.#taskListComponent.element,
-      onDataChange: this.#handleTaskChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
     taskPresenter.init(task);
