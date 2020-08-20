@@ -5,6 +5,7 @@ import {generateTask} from './mock/task.js';
 import {generateFilter} from './mock/filter.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import TasksModel from './model/tasks-model.js';
+import FilterModel from './model/filter-model.js';
 
 const TASK_COUNT = 22;
 
@@ -13,6 +14,8 @@ const filters = generateFilter(tasks);
 
 const tasksModel = new TasksModel();
 tasksModel.tasks = tasks;
+
+const filterModel = new FilterModel();
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
