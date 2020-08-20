@@ -5,6 +5,7 @@ import TaskListView from '../view/task-list-view.js';
 import LoadMoreButtonView from '../view/load-more-button-view.js';
 import NoTaskView from '../view/no-task-view.js';
 import TaskPresenter from './task-presenter.js';
+import TaskNewPresenter from './task-new-presenter.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
 import {filter} from '../utils/filter.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
@@ -24,6 +25,7 @@ export default class BoardPresenter {
 
   #renderedTaskCount = TASK_COUNT_PER_STEP;
   #taskPresenter = new Map();
+  #taskNewPresenter = null;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
 
@@ -31,6 +33,8 @@ export default class BoardPresenter {
     this.#boardContainer = boardContainer;
     this.#tasksModel = tasksModel;
     this.#filterModel = filterModel;
+
+    this.#taskNewPresenter = new TaskNewPresenter(this.#taskListComponent.element, this.#handleViewAction);
 
     this.#tasksModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -55,6 +59,12 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  createTask = (callback) => {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+    this.#taskNewPresenter.init(callback);
+  };
+
   #handleLoadMoreButtonClick = () => {
     const taskCount = this.tasks.length;
     const newRenderedTaskCount = Math.min(taskCount, this.#renderedTaskCount + TASK_COUNT_PER_STEP);
@@ -69,6 +79,7 @@ export default class BoardPresenter {
   };
 
   #handleModeChange = () => {
+    this.#taskNewPresenter.destroy();
     this.#taskPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -144,6 +155,7 @@ export default class BoardPresenter {
   #clearBoard = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
     const taskCount = this.tasks.length;
 
+    this.#taskNewPresenter.destroy();
     this.#taskPresenter.forEach((presenter) => presenter.destroy());
     this.#taskPresenter.clear();
 
