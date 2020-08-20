@@ -1,6 +1,7 @@
 import TaskView from '../view/task-view.js';
 import TaskEditView from '../view/task-edit-view.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -92,15 +93,27 @@ export default class TaskPresenter {
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#task, isFavorite: !this.#task.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      {...this.#task, isFavorite: !this.#task.isFavorite},
+    );
   }
 
   #handleArchiveClick = () => {
-    this.#changeData({...this.#task, isArchive: !this.#task.isArchive});
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      {...this.#task, isArchive: !this.#task.isArchive},
+    );
   }
 
   #handleFormSubmit = (task) => {
-    this.#changeData(task);
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      task,
+    );
     this.#replaceFormToCard();
   }
 }
