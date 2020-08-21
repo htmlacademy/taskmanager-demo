@@ -59,7 +59,6 @@ export default class Board {
   }
 
   createTask(callback) {
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
     this._taskNewPresenter.init(callback);
   }
 
