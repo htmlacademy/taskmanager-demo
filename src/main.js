@@ -1,4 +1,5 @@
 import SiteMenuView from "./view/site-menu.js";
+import StatisticsView from "./view/statistics.js";
 import {generateTask} from "./mock/task.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -54,4 +55,7 @@ const handleSiteMenuClick = (menuItem) => {
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
-boardPresenter.init();
+// Для удобства отладки скроем доску
+// boardPresenter.init();
+// и отобразим сразу статистику
+render(siteMainElement, new StatisticsView(tasksModel.getTasks()), RenderPosition.BEFOREEND);
