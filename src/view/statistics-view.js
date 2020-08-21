@@ -1,11 +1,23 @@
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart-view.js';
+import {countCompletedTaskInDateRange} from '../utils/statistics.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createStatisticsTemplate = () => {
-  const completedTaskCount = 0; // Нужно посчитать количество завершенных задач за период
+const renderColorsChart = (colorsCtx, tasks) => {
+  // Функция для отрисовки графика по цветам
+};
+
+const renderDaysChart = (daysCtx, tasks, dateFrom, dateTo) => {
+  // Функция для отрисовки графика по датам
+};
+
+const createStatisticsTemplate = (data) => {
+  const {tasks, dateFrom, dateTo} = data;
+  const completedTaskCount = countCompletedTaskInDateRange(tasks, dateFrom, dateTo);
 
   return `<section class="statistic container">
     <div class="statistic__line">
@@ -37,6 +49,8 @@ const createStatisticsTemplate = () => {
 
 export default class StatisticsView extends SmartView {
   #datepicker = null;
+  #colorsChart = null;
+  #daysChart = null;
 
   constructor(tasks) {
     super();
@@ -58,6 +72,16 @@ export default class StatisticsView extends SmartView {
 
   removeElement = () => {
     super.removeElement();
+
+    if (this.#colorsChart) {
+      this.#colorsChart.destroy();
+      this.#colorsChart = null;
+    }
+
+    if (this.#daysChart) {
+      this.#daysChart.destroy();
+      this.#daysChart = null;
+    }
 
     if (this.#datepicker) {
       this.#datepicker.destroy();
@@ -95,6 +119,11 @@ export default class StatisticsView extends SmartView {
   }
 
   #setCharts = () => {
-    // Нужно отрисовать два графика
+    const {tasks, dateFrom, dateTo} = this._data;
+    const colorsCtx = this.element.querySelector('.statistic__colors');
+    const daysCtx = this.element.querySelector('.statistic__days');
+
+    this.#colorsChart = renderColorsChart(colorsCtx, tasks);
+    this.#daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
   }
 }
