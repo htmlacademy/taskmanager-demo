@@ -9,13 +9,16 @@ export default class TaskNew {
     this._changeData = changeData;
 
     this._taskEditComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(callback) {
+    this._destroyCallback = callback;
+
     if (this._taskEditComponent !== null) {
       return;
     }
@@ -32,6 +35,10 @@ export default class TaskNew {
   destroy() {
     if (this._taskEditComponent === null) {
       return;
+    }
+
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
     }
 
     remove(this._taskEditComponent);
