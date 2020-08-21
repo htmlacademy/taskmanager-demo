@@ -3,20 +3,24 @@ import flatpickr from 'flatpickr';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart-view.js';
-import {countCompletedTaskInDateRange} from '../utils/statistics.js';
+import {countCompletedTaskInDateRange, makeItemsUniq, countTasksByColor, colorToHex} from '../utils/statistics.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const renderColorsChart = (colorsCtx, tasks) => {
-  // Функция для отрисовки графика по цветам
+  const taskColors = tasks.map((task) => task.color);
+  const uniqColors = makeItemsUniq(taskColors);
+  const taskByColorCounts = uniqColors.map((color) => countTasksByColor(tasks, color));
+  const hexColors = uniqColors.map((color) => colorToHex[color]);
+
   return new Chart(colorsCtx, {
     plugins: [ChartDataLabels],
     type: 'pie',
     data: {
-      labels: ['BLACK'], // Сюда нужно передать названия уникальных цветов, они станут ярлыками
+      labels: uniqColors,
       datasets: [{
-        data: [1], // Сюда нужно передать в том же порядке количество задач по каждому цвету
-        backgroundColor: ['#000'], // Сюда нужно передать в том же порядке HEX каждого цвета
+        data: taskByColorCounts,
+        backgroundColor: hexColors,
       }],
     },
     options: {
