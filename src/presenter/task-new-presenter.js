@@ -7,13 +7,16 @@ export default class TaskNewPresenter {
   #taskListContainer = null;
   #changeData = null;
   #taskEditComponent = null;
+  #destroyCallback = null;
 
   constructor(taskListContainer, changeData) {
     this.#taskListContainer = taskListContainer;
     this.#changeData = changeData;
   }
 
-  init = () => {
+  init = (callback) => {
+    this.#destroyCallback = callback;
+
     if (this.#taskEditComponent !== null) {
       return;
     }
@@ -31,6 +34,8 @@ export default class TaskNewPresenter {
     if (this.#taskEditComponent === null) {
       return;
     }
+
+    this.#destroyCallback?.();
 
     remove(this.#taskEditComponent);
     this.#taskEditComponent = null;
