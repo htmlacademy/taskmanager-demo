@@ -1,9 +1,21 @@
 import dayjs from "dayjs";
 import flatpickr from "flatpickr";
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from "./smart.js";
+import {countCompletedTaskInDateRange} from "../utils/statistics.js";
 
-const createStatisticsTemplate = () => {
-  const completedTaskCount = 0; // Нужно посчитать количество завершенных задач за период
+const renderColorsChart = (colorsCtx, tasks) => {
+  // Функция для отрисовки графика по цветам
+};
+
+const renderDaysChart = (daysCtx, tasks, dateFrom, dateTo) => {
+  // Функция для отрисовки графика по датам
+};
+
+const createStatisticsTemplate = (data) => {
+  const {tasks, dateFrom, dateTo} = data;
+  const completedTaskCount = countCompletedTaskInDateRange(tasks, dateFrom, dateTo);
 
   return `<section class="statistic container">
     <div class="statistic__line">
@@ -47,6 +59,9 @@ export default class Statistics extends SmartView {
       dateTo: dayjs().toDate()
     };
 
+    this._colorsCart = null;
+    this._daysChart = null;
+
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
 
     this._setCharts();
@@ -55,6 +70,11 @@ export default class Statistics extends SmartView {
 
   removeElement() {
     super.removeElement();
+
+    if (this._colorsCart !== null || this._daysChart !== null) {
+      this._colorsCart = null;
+      this._daysChart = null;
+    }
 
     if (this._datepicker) {
       this._datepicker.destroy();
@@ -100,6 +120,16 @@ export default class Statistics extends SmartView {
   }
 
   _setCharts() {
-    // Нужно отрисовать два графика
+    if (this._colorsCart !== null || this._daysChart !== null) {
+      this._colorsCart = null;
+      this._daysChart = null;
+    }
+
+    const {tasks, dateFrom, dateTo} = this._data;
+    const colorsCtx = this.getElement().querySelector(`.statistic__colors`);
+    const daysCtx = this.getElement().querySelector(`.statistic__days`);
+
+    this._colorsCart = renderColorsChart(colorsCtx, tasks);
+    this._daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
   }
 }
