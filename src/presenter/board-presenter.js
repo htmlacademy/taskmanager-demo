@@ -62,10 +62,10 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
-  createTask = () => {
+  createTask = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
-    this.#taskNewPresenter.init();
+    this.#taskNewPresenter.init(callback);
   }
 
   #handleModeChange = () => {
