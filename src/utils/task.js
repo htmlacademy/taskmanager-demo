@@ -61,3 +61,9 @@ export const sortTaskDown = (taskA, taskB) => {
 export const isDatesEqual = (dateA, dateB) => {
   return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, `D`);
 };
+
+// Date.now() и Math.random() - плохие решения для генерации id
+// в "продуктовом" коде, а для моков самое то.
+// Для "продуктового" кода используйте что-то понадежнее,
+// вроде nanoid - https://github.com/ai/nanoid
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
