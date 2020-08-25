@@ -1,22 +1,26 @@
 import Observable from '../framework/observable.js';
-import {generateTask} from '../mock/task.js';
 
 export default class TasksModel extends Observable {
   #tasksApiService = null;
-  #tasks = Array.from({length: 22}, generateTask);
+  #tasks = [];
 
   constructor(tasksApiService) {
     super();
     this.#tasksApiService = tasksApiService;
-
-    this.#tasksApiService.tasks.then((tasks) => {
-      console.log(tasks.map(this.#adaptToClient));
-    });
   }
 
   get tasks() {
     return this.#tasks;
   }
+
+  init = async () => {
+    try {
+      const tasks = await this.#tasksApiService.tasks;
+      this.#tasks = tasks.map(this.#adaptToClient);
+    } catch(err) {
+      this.#tasks = [];
+    }
+  };
 
   updateTask = (updateType, update) => {
     const index = this.#tasks.findIndex((task) => task.id === update.id);
