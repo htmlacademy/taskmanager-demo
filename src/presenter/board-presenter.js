@@ -84,19 +84,31 @@ export default class BoardPresenter {
     this.#taskPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
-        this.#tasksModel.updateTask(updateType, update);
+        try {
+          await this.#tasksModel.updateTask(updateType, update);
+        } catch(err) {
+          this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_TASK:
         this.#taskNewPresenter.setSaving();
-        this.#tasksModel.addTask(updateType, update);
+        try {
+          await this.#tasksModel.addTask(updateType, update);
+        } catch(err) {
+          this.#taskNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_TASK:
         this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
-        this.#tasksModel.deleteTask(updateType, update);
+        try {
+          await this.#tasksModel.deleteTask(updateType, update);
+        } catch(err) {
+          this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+        }
         break;
     }
   }

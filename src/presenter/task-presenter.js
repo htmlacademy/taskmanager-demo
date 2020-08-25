@@ -12,6 +12,7 @@ const Mode = {
 export const State = {
   SAVING: 'SAVING',
   DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export default class TaskPresenter {
@@ -81,6 +82,14 @@ export default class TaskPresenter {
       return;
     }
 
+    const resetFormState = () => {
+      this.#taskEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
     switch (state) {
       case State.SAVING:
         this.#taskEditComponent.updateData({
@@ -93,6 +102,10 @@ export default class TaskPresenter {
           isDisabled: true,
           isDeleting: true,
         });
+        break;
+      case State.ABORTING:
+        this.#taskComponent.shake(resetFormState);
+        this.#taskEditComponent.shake(resetFormState);
         break;
     }
   }
