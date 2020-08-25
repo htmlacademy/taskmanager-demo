@@ -40,8 +40,9 @@ function handleNewTaskButtonClick() {
   newTaskButtonComponent.element.disabled = true;
 }
 
-render(newTaskButtonComponent, siteHeaderElement);
-
 filterPresenter.init();
 boardPresenter.init();
-tasksModel.init();
+tasksModel.init()
+  .finally(() => {
+    render(newTaskButtonComponent, siteHeaderElement);
+  });
