@@ -1,9 +1,18 @@
 import AbstractObservable from '../utils/abstract-observable.js';
 
 export default class Tasks extends AbstractObservable {
-  constructor() {
+  constructor(apiService) {
     super();
     this._tasks = [];
+    this._apiService = apiService;
+
+    this._apiService.getTasks().then((tasks) => {
+      console.log(tasks);
+      // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+      // а ещё на сервере используется snake_case, а у нас camelCase.
+      // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+      // Есть вариант получше - паттерн "Адаптер"
+    });
   }
 
   setTasks(tasks) {
