@@ -51,7 +51,8 @@ export default class TaskPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#taskEditComponent, prevTaskEditComponent);
+      replace(this.#taskComponent, prevTaskEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevTaskComponent);
@@ -67,6 +68,24 @@ export default class TaskPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#taskEditComponent.reset(this.#task);
       this.#replaceFormToCard();
+    }
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#taskEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#taskEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
     }
   };
 
@@ -123,7 +142,6 @@ export default class TaskPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceFormToCard();
   };
 
   #handleDeleteClick = (task) => {
