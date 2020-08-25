@@ -4,7 +4,7 @@ import TaskListView from '../view/task-list.js';
 import LoadingView from '../view/loading.js';
 import NoTaskView from '../view/no-task.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
-import TaskPresenter from './task.js';
+import TaskPresenter, {State as TaskPresenterViewState} from './task.js';
 import TaskNewPresenter from './task-new.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
@@ -88,12 +88,15 @@ export default class Board {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
+        this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
         this._tasksModel.updateTask(updateType, update);
         break;
       case UserAction.ADD_TASK:
+        this._taskNewPresenter.setSaving();
         this._tasksModel.addTask(updateType, update);
         break;
       case UserAction.DELETE_TASK:
+        this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
         this._tasksModel.deleteTask(updateType, update);
         break;
     }
