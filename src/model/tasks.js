@@ -30,13 +30,17 @@ export default class Tasks extends AbstractObservable {
       throw new Error('Can\'t update unexisting task');
     }
 
-    this._tasks = [
-      ...this._tasks.slice(0, index),
-      update,
-      ...this._tasks.slice(index + 1),
-    ];
+    this._apiService.updateTask(update)
+      .then((response) => {
+        const updatedTask = this._adaptToClient(response);
+        this._tasks = [
+          ...this._tasks.slice(0, index),
+          updatedTask,
+          ...this._tasks.slice(index + 1),
+        ];
 
-    this._notify(updateType, update);
+        this._notify(updateType, updatedTask);
+      });
   }
 
   addTask(updateType, update) {
