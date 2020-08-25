@@ -1,6 +1,8 @@
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class ApiService {
@@ -28,6 +30,28 @@ export default class ApiService {
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  }
+
+  addTask = async (task) => {
+    const response = await this.#load({
+      url: 'tasks',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(task)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  deleteTask = async (task) => {
+    const response = await this.#load({
+      url: `tasks/${task.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
   }
 
   #load = async ({
