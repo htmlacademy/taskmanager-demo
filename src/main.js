@@ -44,3 +44,4 @@ render(newTaskButtonComponent, siteHeaderElement);
 
 filterPresenter.init();
 boardPresenter.init();
+tasksModel.init();
