@@ -96,10 +96,18 @@ export default class Board {
         });
         break;
       case UserAction.ADD_TASK:
-        this._tasksModel.addTask(updateType, update);
+        this._api.addTask(update).then((response) => {
+          this._tasksModel.addTask(updateType, response);
+        });
         break;
       case UserAction.DELETE_TASK:
-        this._tasksModel.deleteTask(updateType, update);
+        this._api.deleteTask(update).then(() => {
+          // Обратите внимание, метод удаления задачи на сервере
+          // ничего не возвращает. Это и верно,
+          // ведь что можно вернуть при удалении задачи?
+          // Поэтому в модель мы всё также передаем update
+          this._tasksModel.deleteTask(updateType, update);
+        });
         break;
     }
   }
