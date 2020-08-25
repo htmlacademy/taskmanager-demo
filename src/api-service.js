@@ -1,6 +1,8 @@
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class ApiService {
@@ -22,6 +24,23 @@ export default class ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(ApiService.parseResponse);
+  }
+
+  addTask(task) {
+    return this._load({
+      url: 'tasks',
+      method: Method.POST,
+      body: JSON.stringify(this._adaptToServer(task)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(ApiService.parseResponse);
+  }
+
+  deleteTask(task) {
+    return this._load({
+      url: `tasks/${task.id}`,
+      method: Method.DELETE,
+    });
   }
 
   _load({

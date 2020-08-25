@@ -44,12 +44,16 @@ export default class Tasks extends AbstractObservable {
   }
 
   addTask(updateType, update) {
-    this._tasks = [
-      update,
-      ...this._tasks,
-    ];
+    this._apiService.addTask(update)
+      .then((response) => {
+        const newTask = this._adaptToClient(response);
+        this._tasks = [
+          newTask,
+          ...this._tasks,
+        ];
 
-    this._notify(updateType, update);
+        this._notify(updateType, newTask);
+      });
   }
 
   deleteTask(updateType, update) {
@@ -59,12 +63,18 @@ export default class Tasks extends AbstractObservable {
       throw new Error('Can\'t delete unexisting task');
     }
 
-    this._tasks = [
-      ...this._tasks.slice(0, index),
-      ...this._tasks.slice(index + 1),
-    ];
+    this._apiService.deleteTask(update)
+      .then(() => {
+        // Обратите внимание, метод удаления задачи на сервере
+        // ничего не возвращает. Это и верно,
+        // ведь что можно вернуть при удалении задачи?
+        this._tasks = [
+          ...this._tasks.slice(0, index),
+          ...this._tasks.slice(index + 1),
+        ];
 
-    this._notify(updateType);
+        this._notify(updateType);
+      });
   }
 
   _adaptToClient(task) {
