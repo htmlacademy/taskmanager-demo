@@ -1,4 +1,5 @@
 import Observable from '../framework/observable.js';
+import {UpdateType} from '../const.js';
 
 export default class TasksModel extends Observable {
   #tasksApiService = null;
@@ -20,6 +21,8 @@ export default class TasksModel extends Observable {
     } catch(err) {
       this.#tasks = [];
     }
+
+    this._notify(UpdateType.INIT);
   }
 
   updateTask(updateType, update) {
