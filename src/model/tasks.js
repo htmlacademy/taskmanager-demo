@@ -1,4 +1,5 @@
 import AbstractObservable from '../utils/abstract-observable.js';
+import {UpdateType} from '../const.js';
 
 export default class Tasks extends AbstractObservable {
   constructor(apiService) {
@@ -11,6 +12,10 @@ export default class Tasks extends AbstractObservable {
     this._apiService.getTasks()
       .then((tasks) => {
         this._tasks = tasks.map(this._adaptToClient);
+      })
+      .catch(() => {})
+      .finally(() => {
+        this._notify(UpdateType.INIT);
       });
   }
 
