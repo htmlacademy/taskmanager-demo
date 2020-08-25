@@ -5,7 +5,7 @@ import BoardPresenter from './presenter/board.js';
 import FilterPresenter from './presenter/filter.js';
 import TasksModel from './model/tasks.js';
 import FilterModel from './model/filter.js';
-import {MenuItem} from './const.js';
+import {MenuItem, UpdateType} from './const.js';
 import Api from './api.js';
 
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
@@ -63,6 +63,10 @@ render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
 filterPresenter.init();
 boardPresenter.init();
 
-api.getTasks().then((tasks) => {
-  tasksModel.setTasks(tasks);
-});
+api.getTasks()
+  .then((tasks) => {
+    tasksModel.setTasks(UpdateType.INIT, tasks);
+  })
+  .catch(() => {
+    tasksModel.setTasks(UpdateType.INIT, []);
+  });
