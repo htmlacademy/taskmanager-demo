@@ -7,10 +7,22 @@ import FilterPresenter from './presenter/filter.js';
 import TasksModel from './model/tasks.js';
 import FilterModel from './model/filter.js';
 import {MenuItem} from './const.js';
+import Api from './api.js';
 
 const TASK_COUNT = 22;
+const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
+const END_POINT = 'https://15.ecmascript.pages.academy/task-manager';
 
 const tasks = Array.from({length: TASK_COUNT}, generateTask);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getTasks().then((tasks) => {
+  console.log(tasks);
+  // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
+  // а ещё на сервере используется snake_case, а у нас camelCase.
+  // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
+  // Есть вариант получше - паттерн "Адаптер"
+});
 
 const tasksModel = new TasksModel();
 tasksModel.setTasks(tasks);
