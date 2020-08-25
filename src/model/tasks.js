@@ -5,14 +5,13 @@ export default class Tasks extends AbstractObservable {
     super();
     this._tasks = [];
     this._apiService = apiService;
-
-    this._apiService.getTasks().then((tasks) => {
-      console.log(tasks.map(this._adaptToClient));
-    });
   }
 
-  setTasks(tasks) {
-    this._tasks = tasks.slice();
+  init() {
+    this._apiService.getTasks()
+      .then((tasks) => {
+        this._tasks = tasks.map(this._adaptToClient);
+      });
   }
 
   getTasks() {

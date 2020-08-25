@@ -1,7 +1,6 @@
 import SiteMenuView from './view/site-menu.js';
 import StatisticsView from './view/statistics.js';
 import {render, RenderPosition, remove} from './utils/render.js';
-import {generateTask} from './mock/task.js';
 import BoardPresenter from './presenter/board.js';
 import FilterPresenter from './presenter/filter.js';
 import TasksModel from './model/tasks.js';
@@ -9,23 +8,17 @@ import FilterModel from './model/filter.js';
 import {MenuItem} from './const.js';
 import ApiService from './api-service.js';
 
-const TASK_COUNT = 22;
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 const END_POINT = 'https://15.ecmascript.pages.academy/task-manager';
 
-const tasks = Array.from({length: TASK_COUNT}, generateTask);
+const siteMainElement = document.querySelector('.main');
+const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
 const tasksModel = new TasksModel(new ApiService(END_POINT, AUTHORIZATION));
-tasksModel.setTasks(tasks);
 
 const filterModel = new FilterModel();
 
-const siteMainElement = document.querySelector('.main');
-const siteHeaderElement = siteMainElement.querySelector('.main__control');
 const siteMenuComponent = new SiteMenuView();
-
-render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
-
 const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, tasksModel);
 
@@ -65,5 +58,8 @@ const handleSiteMenuClick = (menuItem) => {
 
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
+render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
 filterPresenter.init();
 boardPresenter.init();
+
+tasksModel.init();
