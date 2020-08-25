@@ -7,18 +7,15 @@ export default class TasksModel extends AbstractObservable {
   constructor(apiService) {
     super();
     this.#apiService = apiService;
-
-    this.#apiService.tasks.then((tasks) => {
-      console.log(tasks.map(this.#adaptToClient));
-    });
-  }
-
-  set tasks(tasks) {
-    this.#tasks = [...tasks];
   }
 
   get tasks() {
     return this.#tasks;
+  }
+
+  init = async () => {
+    const tasks = await this.#apiService.tasks;
+    this.#tasks = tasks.map(this.#adaptToClient);
   }
 
   updateTask = (updateType, update) => {
