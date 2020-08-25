@@ -32,3 +32,4 @@ newTaskButtonComponent.setClickHandler(handleNewTaskButtonClick);
 
 filterPresenter.init();
 boardPresenter.init();
+tasksModel.init();
