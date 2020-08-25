@@ -46,28 +46,37 @@ export default class TasksModel extends Observable {
     }
   }
 
-  addTask(updateType, update) {
-    this.#tasks = [
-      update,
-      ...this.#tasks,
-    ];
-
-    this._notify(updateType, update);
+  async addTask(updateType, update) {
+    try {
+      const response = await this.#tasksApiService.addTask(update);
+      const newTask = this.#adaptToClient(response);
+      this.#tasks = [newTask, ...this.#tasks];
+      this._notify(updateType, newTask);
+    } catch(err) {
+      throw new Error('Can\'t add task');
+    }
   }
 
-  deleteTask(updateType, update) {
+  async deleteTask(updateType, update) {
     const index = this.#tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting task');
     }
 
-    this.#tasks = [
-      ...this.#tasks.slice(0, index),
-      ...this.#tasks.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      // Обратите внимание, метод удаления задачи на сервере
+      // ничего не возвращает. Это и верно,
+      // ведь что можно вернуть при удалении задачи?
+      await this.#tasksApiService.deleteTask(update);
+      this.#tasks = [
+        ...this.#tasks.slice(0, index),
+        ...this.#tasks.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
   }
 
   #adaptToClient(task) {
