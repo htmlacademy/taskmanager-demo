@@ -27,9 +27,10 @@ const handleNewTaskButtonClick = () => {
   newTaskButtonComponent.element.disabled = true;
 };
 
-render(newTaskButtonComponent, siteHeaderElement);
-newTaskButtonComponent.setClickHandler(handleNewTaskButtonClick);
-
 filterPresenter.init();
 boardPresenter.init();
-tasksModel.init();
+tasksModel.init()
+  .finally(() => {
+    render(newTaskButtonComponent, siteHeaderElement);
+    newTaskButtonComponent.setClickHandler(handleNewTaskButtonClick);
+  });
