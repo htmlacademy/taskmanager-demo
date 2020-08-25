@@ -9,6 +9,11 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+};
+
 export default class TaskPresenter {
   #taskListContainer = null;
   #changeData = null;
@@ -51,7 +56,8 @@ export default class TaskPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#taskEditComponent, prevTaskEditComponent);
+      replace(this.#taskComponent, prevTaskEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevTaskComponent);
@@ -67,6 +73,27 @@ export default class TaskPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#taskEditComponent.reset(this.#task);
       this.#replaceFormToCard();
+    }
+  }
+
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case State.SAVING:
+        this.#taskEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this.#taskEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
     }
   }
 
@@ -123,7 +150,6 @@ export default class TaskPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceFormToCard();
   }
 
   #handleDeleteClick = (task) => {

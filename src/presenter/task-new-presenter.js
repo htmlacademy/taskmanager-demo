@@ -42,13 +42,19 @@ export default class TaskNewPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving = () => {
+    this.#taskEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #handleFormSubmit = (task) => {
     this.#changeData(
       UserAction.ADD_TASK,
       UpdateType.MINOR,
       task,
     );
-    this.destroy();
   }
 
   #handleDeleteClick = () => {
