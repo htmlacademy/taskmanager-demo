@@ -7,12 +7,15 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import TasksModel from './model/tasks-model.js';
 import FilterModel from './model/filter-model.js';
 import {MenuItem} from './const.js';
+import ApiService from './api-service.js';
 
 const TASK_COUNT = 22;
+const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
+const END_POINT = 'https://16.ecmascript.pages.academy/task-manager';
 
 const tasks = Array.from({length: TASK_COUNT}, generateTask);
 
-const tasksModel = new TasksModel();
+const tasksModel = new TasksModel(new ApiService(END_POINT, AUTHORIZATION));
 tasksModel.tasks = tasks;
 
 const filterModel = new FilterModel();
