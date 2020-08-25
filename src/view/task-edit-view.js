@@ -23,9 +23,9 @@ const BLANK_TASK = {
   isFavorite: false,
 };
 
-function createTaskEditDateTemplate(dueDate, isDueDate) {
+function createTaskEditDateTemplate(dueDate, isDueDate, isDisabled) {
   return (
-    `<button class="card__date-deadline-toggle" type="button">
+    `<button class="card__date-deadline-toggle" type="button" ${isDisabled ? 'disabled' : ''}>
       date: <span class="card__date-status">${isDueDate ? 'yes' : 'no'}</span>
     </button>
 
@@ -37,6 +37,7 @@ function createTaskEditDateTemplate(dueDate, isDueDate) {
           placeholder=""
           name="date"
           value="${humanizeTaskDueDate(dueDate)}"
+          ${isDisabled ? 'disabled' : ''}
         />
       </label>
     </fieldset>` : ''}
@@ -44,9 +45,9 @@ function createTaskEditDateTemplate(dueDate, isDueDate) {
   );
 }
 
-function createTaskEditRepeatingTemplate(repeating, isRepeating) {
+function createTaskEditRepeatingTemplate(repeating, isRepeating, isDisabled) {
   return (
-    `<button class="card__repeat-toggle" type="button">
+    `<button class="card__repeat-toggle" type="button" ${isDisabled ? 'disabled' : ''}>
       repeat:<span class="card__repeat-status">${isRepeating ? 'yes' : 'no'}</span>
     </button>
 
@@ -59,6 +60,7 @@ function createTaskEditRepeatingTemplate(repeating, isRepeating) {
         name="repeat"
         value="${day}"
         ${repeat ? 'checked' : ''}
+        ${isDisabled ? 'disabled' : ''}
       />
       <label class="card__repeat-day" for="repeat-${day}"
         >${day}</label
@@ -68,7 +70,7 @@ function createTaskEditRepeatingTemplate(repeating, isRepeating) {
   );
 }
 
-function createTaskEditColorsTemplate(currentColor) {
+function createTaskEditColorsTemplate(currentColor, isDisabled) {
   return COLORS.map((color) => `<input
     type="radio"
     id="color-${color}"
@@ -76,6 +78,7 @@ function createTaskEditColorsTemplate(currentColor) {
     name="color"
     value="${color}"
     ${currentColor === color ? 'checked' : ''}
+    ${isDisabled ? 'disabled' : ''}
   />
   <label
     for="color-${color}"
@@ -85,17 +88,27 @@ function createTaskEditColorsTemplate(currentColor) {
 }
 
 function createTaskEditTemplate(data) {
-  const {color, description, dueDate, repeating, isDueDate, isRepeating} = data;
+  const {
+    color,
+    description,
+    dueDate,
+    repeating,
+    isDueDate,
+    isRepeating,
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = data;
 
-  const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate);
+  const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate, isDisabled);
 
   const repeatingClassName = isRepeating
     ? 'card--repeat'
     : '';
 
-  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating, isRepeating);
+  const repeatingTemplate = createTaskEditRepeatingTemplate(repeating, isRepeating, isDisabled);
 
-  const colorsTemplate = createTaskEditColorsTemplate(color);
+  const colorsTemplate = createTaskEditColorsTemplate(color, isDisabled);
 
   const isSubmitDisabled = (isDueDate && dueDate === null) || (isRepeating && !isTaskRepeating(repeating));
 
@@ -115,6 +128,7 @@ function createTaskEditTemplate(data) {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
+                ${isDisabled ? 'disabled' : ''}
               >${he.encode(description)}</textarea>
             </label>
           </div>
@@ -136,10 +150,13 @@ function createTaskEditTemplate(data) {
             </div>
           </div>
 
-          <div class="card__status-btns">
-            <button class="card__save" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>save</button>
-            <button class="card__delete" type="button">delete</button>
-          </div>
+        <div class="card__status-btns">
+          <button class="card__save" type="submit" ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>
+            ${isSaving ? 'saving...' : 'save'}
+          </button>
+          <button class="card__delete" type="button" ${isDisabled ? 'disabled' : ''}>
+            ${isDeleting ? 'deleting...' : 'delete'}
+          </button>
         </div>
       </form>
     </article>`
@@ -280,6 +297,9 @@ export default class TaskEditView extends AbstractStatefulView {
     return {...task,
       isDueDate: task.dueDate !== null,
       isRepeating: isTaskRepeating(task.repeating),
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
@@ -304,6 +324,9 @@ export default class TaskEditView extends AbstractStatefulView {
 
     delete task.isDueDate;
     delete task.isRepeating;
+    delete task.isDisabled;
+    delete task.isSaving;
+    delete task.isDeleting;
 
     return task;
   }
