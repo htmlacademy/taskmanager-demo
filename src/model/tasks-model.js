@@ -1,4 +1,5 @@
 import AbstractObservable from '../utils/abstract-observable.js';
+import {UpdateType} from '../const.js';
 
 export default class TasksModel extends AbstractObservable {
   #apiService = null;
@@ -14,8 +15,14 @@ export default class TasksModel extends AbstractObservable {
   }
 
   init = async () => {
-    const tasks = await this.#apiService.tasks;
-    this.#tasks = tasks.map(this.#adaptToClient);
+    try {
+      const tasks = await this.#apiService.tasks;
+      this.#tasks = tasks.map(this.#adaptToClient);
+    } catch(err) {
+      this.#tasks = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updateTask = (updateType, update) => {
