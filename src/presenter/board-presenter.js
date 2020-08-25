@@ -93,12 +93,15 @@ export default class BoardPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
+        this.#taskPresenters.get(update.id).setSaving();
         this.#tasksModel.updateTask(updateType, update);
         break;
       case UserAction.ADD_TASK:
+        this.#newTaskPresenter.setSaving();
         this.#tasksModel.addTask(updateType, update);
         break;
       case UserAction.DELETE_TASK:
+        this.#taskPresenters.get(update.id).setDeleting();
         this.#tasksModel.deleteTask(updateType, update);
         break;
     }
