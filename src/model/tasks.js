@@ -27,10 +27,10 @@ export default class Tasks extends AbstractObservable {
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      return Promise.reject('Can\'t update unexisting task');
     }
 
-    this._apiService.updateTask(update)
+    return this._apiService.updateTask(update)
       .then((response) => {
         const updatedTask = this._adaptToClient(response);
         this._tasks = [
@@ -40,11 +40,14 @@ export default class Tasks extends AbstractObservable {
         ];
 
         this._notify(updateType, updatedTask);
+      })
+      .catch(() => {
+        throw new Error('Can\'t update task');
       });
   }
 
   addTask(updateType, update) {
-    this._apiService.addTask(update)
+    return this._apiService.addTask(update)
       .then((response) => {
         const newTask = this._adaptToClient(response);
         this._tasks = [
@@ -53,6 +56,9 @@ export default class Tasks extends AbstractObservable {
         ];
 
         this._notify(updateType, newTask);
+      })
+      .catch(() => {
+        throw new Error('Can\'t add task');
       });
   }
 
@@ -60,10 +66,10 @@ export default class Tasks extends AbstractObservable {
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting task');
+      return Promise.reject('Can\'t delete unexisting task');
     }
 
-    this._apiService.deleteTask(update)
+    return this._apiService.deleteTask(update)
       .then(() => {
         // Обратите внимание, метод удаления задачи на сервере
         // ничего не возвращает. Это и верно,
@@ -74,6 +80,9 @@ export default class Tasks extends AbstractObservable {
         ];
 
         this._notify(updateType);
+      })
+      .catch(() => {
+        throw new Error('Can\'t delete task');
       });
   }
 

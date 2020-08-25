@@ -89,15 +89,24 @@ export default class Board {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
-        this._tasksModel.updateTask(updateType, update);
+        this._tasksModel.updateTask(updateType, update)
+          .catch(() => {
+            this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_TASK:
         this._taskNewPresenter.setSaving();
-        this._tasksModel.addTask(updateType, update);
+        this._tasksModel.addTask(updateType, update)
+          .catch(() => {
+            this._taskNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_TASK:
         this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
-        this._tasksModel.deleteTask(updateType, update);
+        this._tasksModel.deleteTask(updateType, update)
+          .catch(() => {
+            this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
+          });
         break;
     }
   }
