@@ -7,11 +7,7 @@ export default class Tasks extends AbstractObservable {
     this._apiService = apiService;
 
     this._apiService.getTasks().then((tasks) => {
-      console.log(tasks);
-      // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
-      // а ещё на сервере используется snake_case, а у нас camelCase.
-      // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
-      // Есть вариант получше - паттерн "Адаптер"
+      console.log(tasks.map(this._adaptToClient));
     });
   }
 
@@ -61,5 +57,26 @@ export default class Tasks extends AbstractObservable {
     ];
 
     this._notify(updateType);
+  }
+
+  _adaptToClient(task) {
+    const adaptedTask = Object.assign(
+      {},
+      task,
+      {
+        dueDate: task['due_date'] !== null ? new Date(task['due_date']) : task['due_date'], // На клиенте дата хранится как экземпляр Date
+        isArchive: task['is_archived'],
+        isFavorite: task['is_favorite'],
+        repeating: task['repeating_days'],
+      },
+    );
+
+    // Ненужные ключи мы удаляем
+    delete adaptedTask['due_date'];
+    delete adaptedTask['is_archived'];
+    delete adaptedTask['is_favorite'];
+    delete adaptedTask['repeating_days'];
+
+    return adaptedTask;
   }
 }
