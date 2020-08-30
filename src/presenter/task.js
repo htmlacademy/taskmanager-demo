@@ -1,8 +1,10 @@
 import TaskView from '../view/task.js';
 import TaskEditView from '../view/task-edit.js';
+import {isOnline} from '../utils/common.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {isTaskRepeating, isDatesEqual} from '../utils/task.js';
+import {toast} from '../utils/toast.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -132,6 +134,11 @@ export default class Task {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      toast('You can\'t edit task offline');
+      return;
+    }
+
     this._replaceCardToForm();
   }
 
@@ -164,6 +171,11 @@ export default class Task {
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast('You can\'t save task offline');
+      return;
+    }
+
     // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
     // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
     const isMinorUpdate =
@@ -178,6 +190,11 @@ export default class Task {
   }
 
   _handleDeleteClick(task) {
+    if (!isOnline()) {
+      toast('You can\'t delete task offline');
+      return;
+    }
+
     this._changeData(
       UserAction.DELETE_TASK,
       UpdateType.MINOR,
