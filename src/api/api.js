@@ -1,4 +1,4 @@
-import TasksModel from "./model/tasks.js";
+import TasksModel from "../model/tasks.js";
 
 const Method = {
   GET: `GET`,
