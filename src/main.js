@@ -6,7 +6,7 @@ import TasksModel from "./model/tasks.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 import {MenuItem, UpdateType, FilterType} from "./const.js";
-import Api from "./api.js";
+import Api from "./api/index.js";
 
 const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/task-manager`;
