@@ -7,7 +7,7 @@ import NoTaskView from '../view/no-task-view.js';
 import TaskPresenter from './task-presenter.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
 import {filter} from '../utils/filter.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -20,11 +20,12 @@ export default class BoardPresenter {
   #taskListComponent = new TaskListView();
   #loadMoreButtonComponent = null;
   #sortComponent = null;
-  #noTaskComponent = new NoTaskView();
+  #noTaskComponent = null;
 
   #renderedTaskCount = TASK_COUNT_PER_STEP;
   #taskPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
 
   constructor({boardContainer, tasksModel, filterModel}) {
     this.#boardContainer = boardContainer;
@@ -36,9 +37,9 @@ export default class BoardPresenter {
   }
 
   get tasks() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const tasks = this.#tasksModel.tasks;
-    const filteredTasks = filter[filterType](tasks);
+    const filteredTasks = filter[this.#filterType](tasks);
 
     switch (this.#currentSortType) {
       case SortType.DATE_UP:
@@ -135,6 +136,10 @@ export default class BoardPresenter {
   }
 
   #renderNoTasks() {
+    this.#noTaskComponent = new NoTaskView({
+      filterType: this.#filterType
+    });
+
     render(this.#noTaskComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -153,8 +158,11 @@ export default class BoardPresenter {
     this.#taskPresenters.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noTaskComponent);
     remove(this.#loadMoreButtonComponent);
+
+    if (this.#noTaskComponent) {
+      remove(this.#noTaskComponent);
+    }
 
     if (resetRenderedTaskCount) {
       this.#renderedTaskCount = TASK_COUNT_PER_STEP;
