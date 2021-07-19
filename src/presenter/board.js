@@ -30,7 +30,6 @@ export default class Board {
 
     this._boardComponent = new BoardView();
     this._taskListComponent = new TaskListView();
-    this._noTaskComponent = new NoTaskView();
     this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -67,9 +66,9 @@ export default class Board {
   }
 
   _getTasks() {
-    const filterType = this._filterModel.getFilter();
+    this._filterType = this._filterModel.getFilter();
     const tasks = this._tasksModel.getTasks();
-    const filtredTasks = filter[filterType](tasks);
+    const filtredTasks = filter[this._filterType](tasks);
 
     switch (this._currentSortType) {
       case SortType.DATE_UP:
@@ -184,6 +183,7 @@ export default class Board {
   }
 
   _renderNoTasks() {
+    this._noTaskComponent = new NoTaskView(this._filterType);
     render(this._boardComponent, this._noTaskComponent, RenderPosition.AFTERBEGIN);
   }
 
@@ -221,9 +221,12 @@ export default class Board {
     this._taskPresenter = {};
 
     remove(this._sortComponent);
-    remove(this._noTaskComponent);
     remove(this._loadingComponent);
     remove(this._loadMoreButtonComponent);
+
+    if (this._noTaskComponent) {
+      remove(this._noTaskComponent);
+    }
 
     if (resetRenderedTaskCount) {
       this._renderedTaskCount = TASK_COUNT_PER_STEP;

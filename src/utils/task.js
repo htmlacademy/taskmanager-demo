@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {FilterType} from '../const';
 
 export const isTaskExpired = (dueDate) =>
   dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
@@ -56,3 +57,19 @@ export const sortTaskDown = (taskA, taskB) => {
 
 export const isDatesEqual = (dateA, dateB) =>
   (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+
+export const getNoTaskText = (filter) => {
+  switch (filter) {
+    case FilterType.FAVORITES:
+      return 'There are no favorite tasks now';
+    case FilterType.TODAY:
+      return 'There are no tasks today';
+    case FilterType.OVERDUE:
+      return 'There are no overdue tasks now';
+    case FilterType.REPEATING:
+      return 'There are no repeating tasks now';
+
+    default:
+      return 'Click «ADD NEW TASK» in menu to create your first task';
+  }
+};

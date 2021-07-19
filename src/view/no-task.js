@@ -1,13 +1,21 @@
 import AbstractView from './abstract.js';
+import {getNoTaskText} from '../utils/task.js';
 
-const createNoTaskTemplate = () => (
-  `<p class="board__no-tasks">
-    Click «ADD NEW TASK» in menu to create your first task
-  </p>`
-);
+const createNoTaskTemplate = (filter) => {
+  const noTaskTextValue = getNoTaskText(filter);
+  return (
+    `<p class="board__no-tasks">
+      ${noTaskTextValue}
+    </p>`);
+};
 
 export default class NoTask extends AbstractView {
+  constructor(data) {
+    super();
+    this._data = data;
+  }
+
   getTemplate() {
-    return createNoTaskTemplate();
+    return createNoTaskTemplate(this._data);
   }
 }
