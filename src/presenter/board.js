@@ -7,7 +7,7 @@ import TaskPresenter from './task.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
 import {filter} from '../utils/filter.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -18,14 +18,15 @@ export default class Board {
     this._boardContainer = boardContainer;
     this._renderedTaskCount = TASK_COUNT_PER_STEP;
     this._taskPresenter = new Map();
+    this._filterType = FilterType.ALL;
     this._currentSortType = SortType.DEFAULT;
 
     this._sortComponent = null;
     this._loadMoreButtonComponent = null;
+    this._noTaskComponent = null;
 
     this._boardComponent = new BoardView();
     this._taskListComponent = new TaskListView();
-    this._noTaskComponent = new NoTaskView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -45,9 +46,9 @@ export default class Board {
   }
 
   _getTasks() {
-    const filterType = this._filterModel.getFilter();
+    this._filterType = this._filterModel.getFilter();
     const tasks = this._tasksModel.getTasks();
-    const filtredTasks = filter[filterType](tasks);
+    const filtredTasks = filter[this._filterType](tasks);
 
     switch (this._currentSortType) {
       case SortType.DATE_UP:
@@ -125,6 +126,7 @@ export default class Board {
   }
 
   _renderNoTasks() {
+    this._noTaskComponent = new NoTaskView(this._filterType);
     render(this._boardComponent, this._noTaskComponent, RenderPosition.AFTERBEGIN);
   }
 
@@ -159,8 +161,11 @@ export default class Board {
     this._taskPresenter.clear();
 
     remove(this._sortComponent);
-    remove(this._noTaskComponent);
     remove(this._loadMoreButtonComponent);
+
+    if (this._noTaskComponent) {
+      remove(this._noTaskComponent);
+    }
 
     if (resetRenderedTaskCount) {
       this._renderedTaskCount = TASK_COUNT_PER_STEP;
