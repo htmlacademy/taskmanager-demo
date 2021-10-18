@@ -36,19 +36,20 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.ADD_NEW_TASK:
       // Скрыть статистику
       // Показать фильтры
-      // Показать доску
+      boardPresenter.destroy();
+      boardPresenter.init();
       boardPresenter.createTask(handleTaskNewFormClose);
       siteMenuComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
       siteMenuComponent.getElement().querySelector(`[value=${MenuItem.STATISTICS}]`).disabled = true;
       break;
     case MenuItem.TASKS:
       // Показать фильтры
-      // Показать доску
+      boardPresenter.init();
       // Скрыть статистику
       break;
     case MenuItem.STATISTICS:
       // Скрыть фильтры
-      // Скрыть доску
+      boardPresenter.destroy();
       // Показать статистику
       break;
   }
