@@ -5,7 +5,7 @@ import BoardPresenter from './presenter/board.js';
 import FilterPresenter from './presenter/filter.js';
 import TasksModel from './model/tasks.js';
 import FilterModel from './model/filter.js';
-import {MenuItem, UpdateType} from './const.js';
+import {MenuItem} from './const.js';
 import Api from './api.js';
 
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
@@ -16,11 +16,11 @@ const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const tasksModel = new TasksModel();
+const tasksModel = new TasksModel(api);
 const filterModel = new FilterModel();
 
 const siteMenuComponent = new SiteMenuView();
-const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterModel, api);
+const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, tasksModel);
 
 const handleTaskNewFormClose = () => {
@@ -60,14 +60,7 @@ const handleSiteMenuClick = (menuItem) => {
 filterPresenter.init();
 boardPresenter.init();
 
-api.getTasks()
-  .then((tasks) => {
-    tasksModel.setTasks(UpdateType.INIT, tasks);
-    render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  })
-  .catch(() => {
-    tasksModel.setTasks(UpdateType.INIT, []);
-    render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-  });
+tasksModel.init().finally(() => {
+  render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+});

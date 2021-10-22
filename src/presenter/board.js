@@ -14,7 +14,7 @@ import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 const TASK_COUNT_PER_STEP = 8;
 
 export default class Board {
-  constructor(boardContainer, tasksModel, filterModel, api) {
+  constructor(boardContainer, tasksModel, filterModel) {
     this._tasksModel = tasksModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
@@ -23,7 +23,6 @@ export default class Board {
     this._filterType = FilterType.ALL;
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
-    this._api = api;
 
     this._sortComponent = null;
     this._loadMoreButtonComponent = null;
@@ -90,34 +89,21 @@ export default class Board {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
-        this._api.updateTask(update)
-          .then((response) => {
-            this._tasksModel.updateTask(updateType, response);
-          })
+        this._tasksModel.updateTask(updateType, update)
           .catch(() => {
             this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
           });
         break;
       case UserAction.ADD_TASK:
         this._taskNewPresenter.setSaving();
-        this._api.addTask(update)
-          .then((response) => {
-            this._tasksModel.addTask(updateType, response);
-          })
+        this._tasksModel.addTask(updateType, update)
           .catch(() => {
             this._taskNewPresenter.setAborting();
           });
         break;
       case UserAction.DELETE_TASK:
         this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.DELETING);
-        this._api.deleteTask(update)
-          .then(() => {
-            // Обратите внимание, метод удаления задачи на сервере
-            // ничего не возвращает. Это и верно,
-            // ведь что можно вернуть при удалении задачи?
-            // Поэтому в модель мы всё также передаем update
-            this._tasksModel.deleteTask(updateType, update);
-          })
+        this._tasksModel.deleteTask(updateType, update)
           .catch(() => {
             this._taskPresenter.get(update.id).setViewState(TaskPresenterViewState.ABORTING);
           });

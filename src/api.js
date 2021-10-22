@@ -1,5 +1,3 @@
-import TasksModel from './model/tasks.js';
-
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -20,30 +18,27 @@ export default class Api {
 
   getTasks() {
     return this._load({url: 'tasks'})
-      .then(Api.toJSON)
-      .then((tasks) => tasks.map(TasksModel.adaptToClient));
+      .then(Api.fromJSON);
   }
 
   updateTask(task) {
     return this._load({
       url: `tasks/${task.id}`,
       method: Method.PUT,
-      body: JSON.stringify(TasksModel.adaptToServer(task)),
+      body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON)
-      .then(TasksModel.adaptToClient);
+      .then(Api.fromJSON);
   }
 
   addTask(task) {
     return this._load({
       url: 'tasks',
       method: Method.POST,
-      body: JSON.stringify(TasksModel.adaptToServer(task)),
+      body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON)
-      .then(TasksModel.adaptToClient);
+      .then(Api.fromJSON);
   }
 
   deleteTask(task) {
@@ -80,7 +75,7 @@ export default class Api {
     return response;
   }
 
-  static toJSON(response) {
+  static fromJSON(response) {
     return response.json();
   }
 
