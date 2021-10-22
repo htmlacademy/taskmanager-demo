@@ -2,19 +2,19 @@ import AbstractObservable from '../utils/abstract-observable.js';
 import {UpdateType} from '../const.js';
 
 export default class Tasks extends AbstractObservable {
-  constructor(api) {
+  constructor(apiService) {
     super();
 
-    this._api = api;
+    this._apiService = apiService;
     this._tasks = [];
   }
 
   init() {
-    return this._api.getTasks()
+    return this._apiService.getTasks()
       .then((tasks) => {
         this._tasks = tasks.map(this._adaptToClient);
       })
-      .catch(() =>{
+      .catch(() => {
         this._tasks = [];
       })
       .finally(() => {
@@ -33,7 +33,7 @@ export default class Tasks extends AbstractObservable {
       throw new Error('Can\'t update unexisting task');
     }
 
-    return this._api.updateTask(this._adaptToServer(update))
+    return this._apiService.updateTask(this._adaptToServer(update))
       .then((response) => {
         const updatedTask = this._adaptToClient(response);
         this._tasks = [
@@ -50,7 +50,7 @@ export default class Tasks extends AbstractObservable {
   }
 
   addTask(updateType, update) {
-    return this._api.addTask(this._adaptToServer(update))
+    return this._apiService.addTask(this._adaptToServer(update))
       .then((response) => {
         const newTask = this._adaptToClient(response);
         this._tasks = [
@@ -72,7 +72,7 @@ export default class Tasks extends AbstractObservable {
       throw new Error('Can\'t delete unexisting task');
     }
 
-    return this._api.deleteTask(update)
+    return this._apiService.deleteTask(update)
       .then(() => {
         this._tasks = [
           ...this._tasks.slice(0, index),

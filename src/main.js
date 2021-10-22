@@ -6,7 +6,7 @@ import FilterPresenter from './presenter/filter.js';
 import TasksModel from './model/tasks.js';
 import FilterModel from './model/filter.js';
 import {MenuItem} from './const.js';
-import Api from './api.js';
+import ApiService from './api-service.js';
 
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 const END_POINT = 'https://15.ecmascript.pages.academy/task-manager';
@@ -14,9 +14,7 @@ const END_POINT = 'https://15.ecmascript.pages.academy/task-manager';
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
-const api = new Api(END_POINT, AUTHORIZATION);
-
-const tasksModel = new TasksModel(api);
+const tasksModel = new TasksModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
 const siteMenuComponent = new SiteMenuView();

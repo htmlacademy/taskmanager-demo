@@ -10,7 +10,7 @@ const SuccessHTTPStatusRange = {
   MAX: 299,
 };
 
-export default class Api {
+export default class ApiService {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -18,7 +18,7 @@ export default class Api {
 
   getTasks() {
     return this._load({url: 'tasks'})
-      .then(Api.fromJSON);
+      .then(ApiService.fromJSON);
   }
 
   updateTask(task) {
@@ -28,7 +28,7 @@ export default class Api {
       body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.fromJSON);
+      .then(ApiService.fromJSON);
   }
 
   addTask(task) {
@@ -38,7 +38,7 @@ export default class Api {
       body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.fromJSON);
+      .then(ApiService.fromJSON);
   }
 
   deleteTask(task) {
@@ -60,8 +60,8 @@ export default class Api {
       `${this._endPoint}/${url}`,
       {method, body, headers},
     )
-      .then(Api.checkStatus)
-      .catch(Api.catchError);
+      .then(ApiService.checkStatus)
+      .catch(ApiService.catchError);
   }
 
   static checkStatus(response) {
