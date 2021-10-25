@@ -18,7 +18,7 @@ export default class ApiService {
 
   getTasks() {
     return this._load({url: 'tasks'})
-      .then(ApiService.fromJSON);
+      .then(ApiService.parseResponse);
   }
 
   updateTask(task) {
@@ -28,7 +28,7 @@ export default class ApiService {
       body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(ApiService.fromJSON);
+      .then(ApiService.parseResponse);
   }
 
   addTask(task) {
@@ -38,7 +38,7 @@ export default class ApiService {
       body: JSON.stringify(task),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(ApiService.fromJSON);
+      .then(ApiService.parseResponse);
   }
 
   deleteTask(task) {
@@ -75,7 +75,7 @@ export default class ApiService {
     return response;
   }
 
-  static fromJSON(response) {
+  static parseResponse(response) {
     return response.json();
   }
 
