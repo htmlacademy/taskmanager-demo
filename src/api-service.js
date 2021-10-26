@@ -5,11 +5,6 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299,
-};
-
 export default class ApiService {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
@@ -25,7 +20,7 @@ export default class ApiService {
     return this._load({
       url: `tasks/${task.id}`,
       method: Method.PUT,
-      body: JSON.stringify(task),
+      body: JSON.stringify(this._adaptToServer(task)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(ApiService.parseResponse);
@@ -35,7 +30,7 @@ export default class ApiService {
     return this._load({
       url: 'tasks',
       method: Method.POST,
-      body: JSON.stringify(task),
+      body: JSON.stringify(this._adaptToServer(task)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(ApiService.parseResponse);
@@ -64,15 +59,33 @@ export default class ApiService {
       .catch(ApiService.catchError);
   }
 
+  _adaptToServer(task) {
+    const adaptedTask = Object.assign(
+      {},
+      task,
+      {
+        'due_date': task.dueDate instanceof Date ? task.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
+        'is_archived': task.isArchive,
+        'is_favorite': task.isFavorite,
+        'repeating_days': task.repeating,
+      },
+    );
+
+    // Ненужные ключи мы удаляем
+    delete adaptedTask.dueDate;
+    delete adaptedTask.isArchive;
+    delete adaptedTask.isFavorite;
+    delete adaptedTask.repeating;
+
+    return adaptedTask;
+  }
+
   static checkStatus(response) {
-    if (
-      response.status < SuccessHTTPStatusRange.MIN ||
-      response.status > SuccessHTTPStatusRange.MAX
-    ) {
-      throw new Error(`${response.status}: ${response.statusText}`);
+    if (response.ok) {
+      return response;
     }
 
-    return response;
+    throw new Error(`${response.status}: ${response.statusText}`);
   }
 
   static parseResponse(response) {

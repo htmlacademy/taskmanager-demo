@@ -30,10 +30,10 @@ export default class Tasks extends AbstractObservable {
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      return Promise.reject('Can\'t update unexisting task');
     }
 
-    return this._apiService.updateTask(this._adaptToServer(update))
+    return this._apiService.updateTask(update)
       .then((response) => {
         const updatedTask = this._adaptToClient(response);
         this._tasks = [
@@ -50,7 +50,7 @@ export default class Tasks extends AbstractObservable {
   }
 
   addTask(updateType, update) {
-    return this._apiService.addTask(this._adaptToServer(update))
+    return this._apiService.addTask(update)
       .then((response) => {
         const newTask = this._adaptToClient(response);
         this._tasks = [
@@ -69,7 +69,7 @@ export default class Tasks extends AbstractObservable {
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting task');
+      return Promise.reject('Can\'t delete unexisting task');
     }
 
     return this._apiService.deleteTask(update)
@@ -103,27 +103,6 @@ export default class Tasks extends AbstractObservable {
     delete adaptedTask['is_archived'];
     delete adaptedTask['is_favorite'];
     delete adaptedTask['repeating_days'];
-
-    return adaptedTask;
-  }
-
-  _adaptToServer(task) {
-    const adaptedTask = Object.assign(
-      {},
-      task,
-      {
-        'due_date': task.dueDate instanceof Date ? task.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
-        'is_archived': task.isArchive,
-        'is_favorite': task.isFavorite,
-        'repeating_days': task.repeating,
-      },
-    );
-
-    // Ненужные ключи мы удаляем
-    delete adaptedTask.dueDate;
-    delete adaptedTask.isArchive;
-    delete adaptedTask.isFavorite;
-    delete adaptedTask.repeating;
 
     return adaptedTask;
   }
