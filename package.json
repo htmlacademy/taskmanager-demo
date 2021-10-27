@@ -10,6 +10,10 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "@babel/core": "7.15.8",
+    "@babel/eslint-parser": "7.15.8",
+    "@babel/preset-env": "7.15.8",
+    "babel-loader": "8.2.3",
     "css-loader": "5.0.1",
     "eslint": "7.31.0",
     "eslint-config-htmlacademy": "4.1.0",

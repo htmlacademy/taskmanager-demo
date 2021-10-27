@@ -14,6 +14,13 @@ import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 const TASK_COUNT_PER_STEP = 8;
 
 export default class Board {
+    // Тестируем babel и eslint
+    #testField = {
+      // text: 'blah-blah',
+    };
+
+    #anotherField = this.#testField?.text ?? 'some text';
+
   constructor(boardContainer, tasksModel, filterModel) {
     this._tasksModel = tasksModel;
     this._filterModel = filterModel;
@@ -39,6 +46,7 @@ export default class Board {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._taskNewPresenter = new TaskNewPresenter(this._taskListComponent, this._handleViewAction);
+    console.log(this.#anotherField);
   }
 
   init() {
