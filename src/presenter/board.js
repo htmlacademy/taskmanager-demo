@@ -14,12 +14,12 @@ import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 const TASK_COUNT_PER_STEP = 8;
 
 export default class Board {
-    // Тестируем babel и eslint
-    #testField = {
-      // text: 'blah-blah',
-    };
+  // Тестируем babel и eslint
+  #testField = {
+    // text: 'blah-blah',
+  };
 
-    #anotherField = this.#testField?.text ?? 'some text';
+  #anotherField = this.#testField?.text ?? 'some text';
 
   constructor(boardContainer, tasksModel, filterModel) {
     this._tasksModel = tasksModel;
@@ -222,9 +222,9 @@ export default class Board {
     if (resetRenderedTaskCount) {
       this._renderedTaskCount = TASK_COUNT_PER_STEP;
     } else {
-      // На случай, если перерисовка доски вызвана
-      // уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
+    // На случай, если перерисовка доски вызвана
+    // уменьшением количества задач (например, удаление или перенос в архив)
+    // нужно скорректировать число показанных задач
       this._renderedTaskCount = Math.min(taskCount, this._renderedTaskCount);
     }
 
