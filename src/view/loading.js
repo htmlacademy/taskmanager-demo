@@ -7,7 +7,5 @@ const createNoTaskTemplate = () => (
 );
 
 export default class Loading extends AbstractView {
-  get template() {
-    return createNoTaskTemplate();
-  }
+  getTemplate = () => createNoTaskTemplate();
 }

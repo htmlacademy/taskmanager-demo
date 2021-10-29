@@ -13,16 +13,16 @@ export default class Abstract {
     }
   }
 
-  get template() {
-    throw new Error('Abstract method not implemented: getTemplate');
-  }
-
   get element() {
     if (!this.#element) {
-      this.#element = createElement(this.template);
+      this.#element = createElement(this.getTemplate());
     }
 
     return this.#element;
+  }
+
+  getTemplate = () => {
+    throw new Error('Abstract method not implemented: getTemplate');
   }
 
   removeElement() {

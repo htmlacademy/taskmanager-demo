@@ -27,7 +27,5 @@ export default class NoTask extends AbstractView {
     this.#data = data;
   }
 
-  get template() {
-    return createNoTaskTemplate(this.#data);
-  }
+  getTemplate = () => createNoTaskTemplate(this.#data);
 }

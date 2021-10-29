@@ -195,9 +195,7 @@ export default class Statistics extends SmartView {
     this.#setDatepicker();
   }
 
-  get template() {
-    return createStatisticsTemplate(this._data);
-  }
+  getTemplate = () => createStatisticsTemplate(this._data);
 
   removeElement = () => {
     super.removeElement();

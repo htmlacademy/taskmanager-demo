@@ -75,9 +75,7 @@ export default class Task extends AbstractView {
     this.#task = task;
   }
 
-  get template() {
-    return createTaskTemplate(this.#task);
-  }
+  getTemplate = () => createTaskTemplate(this.#task);
 
   setEditClickHandler = (callback) => {
     this._callback.editClick = callback;

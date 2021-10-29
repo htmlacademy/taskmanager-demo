@@ -168,9 +168,7 @@ export default class TaskEdit extends SmartView {
     this.#setDatepicker();
   }
 
-  get template() {
-    return createTaskEditTemplate(this._data);
-  }
+  getTemplate = () => createTaskEditTemplate(this._data);
 
   // Перегружаем метод родителя removeElement,
   // чтобы при удалении удалялся более не нужный календарь

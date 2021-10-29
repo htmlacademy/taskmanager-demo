@@ -38,9 +38,7 @@ const createSiteMenuTemplate = () => (
 );
 
 export default class SiteMenu extends AbstractView {
-  get template() {
-    return createSiteMenuTemplate();
-  }
+  getTemplate = () => createSiteMenuTemplate();
 
   setMenuClickHandler = (callback) => {
     this._callback.menuClick = callback;

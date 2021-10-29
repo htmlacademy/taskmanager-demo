@@ -40,9 +40,7 @@ export default class Filter extends AbstractView {
     this.#currentFilter = currentFilterType;
   }
 
-  get template() {
-    return createFilterTemplate(this.#filters, this.#currentFilter);
-  }
+  getTemplate = () => createFilterTemplate(this.#filters, this.#currentFilter);
 
   setFilterTypeChangeHandler = (callback) =>{
     this._callback.filterTypeChange = callback;

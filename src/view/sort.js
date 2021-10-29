@@ -17,9 +17,7 @@ export default class Sort extends AbstractView {
     this.#currentSortType = currentSortType;
   }
 
-  get template() {
-    return createSortTemplate(this.#currentSortType);
-  }
+  getTemplate = () => createSortTemplate(this.#currentSortType);
 
   #sortTypeChangeHandler = (evt) => {
     if (evt.target.tagName !== 'A') {
