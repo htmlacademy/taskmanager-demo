@@ -1,63 +1,23 @@
+/* eslint-disable lines-between-class-members */
 import FilterView from '../view/filter.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import {filter} from '../utils/filter.js';
 import {FilterType, UpdateType} from '../const.js';
 
 export default class Filter {
+  #filterContainer = null;
+  #filterModel = null;
+  #tasksModel = null;
+  #filterComponent = null;
+
   constructor(filterContainer, filterModel, tasksModel) {
-    this._filterContainer = filterContainer;
-    this._filterModel = filterModel;
-    this._tasksModel = tasksModel;
-
-    this._filterComponent = null;
-
-    this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+    this.#filterContainer = filterContainer;
+    this.#filterModel = filterModel;
+    this.#tasksModel = tasksModel;
   }
 
-  init() {
-    const filters = this._getFilters();
-    const prevFilterComponent = this._filterComponent;
-
-    this._filterComponent = new FilterView(filters, this._filterModel.getFilter());
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
-
-    this._tasksModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
-    if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
-      return;
-    }
-
-    replace(this._filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
-  }
-
-  destroy() {
-    remove(this._filterComponent);
-    this._filterComponent = null;
-
-    this._tasksModel.removeObserver(this._handleModelEvent);
-    this._filterModel.removeObserver(this._handleModelEvent);
-
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
-  }
-
-  _handleModelEvent() {
-    this.init();
-  }
-
-  _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
-      return;
-    }
-
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
-  }
-
-  _getFilters() {
-    const tasks = this._tasksModel.getTasks();
+  get filters() {
+    const tasks = this.#tasksModel.tasks;
 
     return [
       {
@@ -91,5 +51,44 @@ export default class Filter {
         count: filter[FilterType.ARCHIVE](tasks).length,
       },
     ];
+  }
+
+  init = () => {
+    const filters = this.filters;
+    const prevFilterComponent = this.#filterComponent;
+
+    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
+    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+
+    this.#tasksModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+
+    if (prevFilterComponent === null) {
+      render(this.#filterContainer, this.#filterComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
+  }
+
+  destroy = () => {
+    remove(this.#filterComponent);
+    this.#filterComponent = null;
+
+    this.#tasksModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+  }
+
+  #handleModelEvent = () => this.init();
+
+  #handleFilterTypeChange = (filterType) => {
+    if (this.#filterModel.filter === filterType) {
+      return;
+    }
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 }

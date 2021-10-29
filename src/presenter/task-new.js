@@ -1,83 +1,77 @@
+/* eslint-disable lines-between-class-members */
 import TaskEditView from '../view/task-edit.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class TaskNew {
+  #taskListContainer = null;
+  #changeData = null;
+  #taskEditComponent = null;
+  #destroyCallback = null;
+
   constructor(taskListContainer, changeData) {
-    this._taskListContainer = taskListContainer;
-    this._changeData = changeData;
-
-    this._taskEditComponent = null;
-    this._destroyCallback = null;
-
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleDeleteClick = this._handleDeleteClick.bind(this);
-    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this.#taskListContainer = taskListContainer;
+    this.#changeData = changeData;
   }
 
-  init(callback) {
-    this._destroyCallback = callback;
+  init = (callback) => {
+    this.#destroyCallback = callback;
 
-    if (this._taskEditComponent !== null) {
+    if (this.#taskEditComponent !== null) {
       return;
     }
 
-    this._taskEditComponent = new TaskEditView();
-    this._taskEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._taskEditComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this.#taskEditComponent = new TaskEditView();
+    this.#taskEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#taskEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
-    render(this._taskListContainer, this._taskEditComponent, RenderPosition.AFTERBEGIN);
+    render(this.#taskListContainer, this.#taskEditComponent, RenderPosition.AFTERBEGIN);
 
-    document.addEventListener('keydown', this._escKeyDownHandler);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  destroy() {
-    if (this._taskEditComponent === null) {
+  destroy = () => {
+    if (this.#taskEditComponent === null) {
       return;
     }
 
-    if (this._destroyCallback !== null) {
-      this._destroyCallback();
+    if (this.#destroyCallback !== null) {
+      this.#destroyCallback();
     }
 
-    remove(this._taskEditComponent);
-    this._taskEditComponent = null;
+    remove(this.#taskEditComponent);
+    this.#taskEditComponent = null;
 
-    document.removeEventListener('keydown', this._escKeyDownHandler);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  setSaving() {
-    this._taskEditComponent.updateData({
-      isDisabled: true,
-      isSaving: true,
-    });
-  }
+  setSaving = () => this.#taskEditComponent.updateData({
+    isDisabled: true,
+    isSaving: true,
+  });
 
-  setAborting() {
+
+  setAborting = () => {
     const resetFormState = () => {
-      this._taskEditComponent.updateData({
+      this.#taskEditComponent.updateData({
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
       });
     };
 
-    this._taskEditComponent.shake(resetFormState);
+    this.#taskEditComponent.shake(resetFormState);
   }
 
-  _handleFormSubmit(task) {
-    this._changeData(
-      UserAction.ADD_TASK,
-      UpdateType.MINOR,
-      task,
-    );
-  }
+  #handleFormSubmit = (task) => this.#changeData(
+    UserAction.ADD_TASK,
+    UpdateType.MINOR,
+    task,
+  );
 
-  _handleDeleteClick() {
-    this.destroy();
-  }
+  #handleDeleteClick = () => this.destroy();
 
-  _escKeyDownHandler(evt) {
+  #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();

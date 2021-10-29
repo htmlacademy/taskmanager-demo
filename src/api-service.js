@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -6,70 +7,82 @@ const Method = {
 };
 
 export default class ApiService {
+  #endPoint = null;
+  #authorization = null;
+
   constructor(endPoint, authorization) {
-    this._endPoint = endPoint;
-    this._authorization = authorization;
+    this.#endPoint = endPoint;
+    this.#authorization = authorization;
   }
 
-  getTasks() {
-    return this._load({url: 'tasks'})
+  get tasks() {
+    return this.#load({url: 'tasks'})
       .then(ApiService.parseResponse);
   }
 
-  updateTask(task) {
-    return this._load({
+  updateTask = async (task) => {
+    const response = await this.#load({
       url: `tasks/${task.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this._adaptToServer(task)),
+      body: JSON.stringify(this.#adaptToServer(task)),
       headers: new Headers({'Content-Type': 'application/json'}),
-    })
-      .then(ApiService.parseResponse);
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
   }
 
-  addTask(task) {
-    return this._load({
+  addTask = async (task) => {
+    const response = await this.#load({
       url: 'tasks',
       method: Method.POST,
-      body: JSON.stringify(this._adaptToServer(task)),
+      body: JSON.stringify(this.#adaptToServer(task)),
       headers: new Headers({'Content-Type': 'application/json'}),
-    })
-      .then(ApiService.parseResponse);
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
   }
 
-  deleteTask(task) {
-    return this._load({
+  deleteTask = async (task) => {
+    const response = await this.#load({
       url: `tasks/${task.id}`,
       method: Method.DELETE,
     });
+
+    return response;
   }
 
-  _load({
+  #load = async ({
     url,
     method = Method.GET,
     body = null,
     headers = new Headers(),
-  }) {
-    headers.append('Authorization', this._authorization);
+  }) => {
+    headers.append('Authorization', this.#authorization);
 
-    return fetch(
-      `${this._endPoint}/${url}`,
+    const response = await fetch(
+      `${this.#endPoint}/${url}`,
       {method, body, headers},
-    )
-      .then(ApiService.checkStatus)
-      .catch(ApiService.catchError);
+    );
+
+    try {
+      ApiService.checkStatus(response);
+      return response;
+    } catch (err) {
+      ApiService.catchError(err);
+    }
   }
 
-  _adaptToServer(task) {
-    const adaptedTask = Object.assign(
-      {},
-      task,
-      {
-        'due_date': task.dueDate instanceof Date ? task.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
-        'is_archived': task.isArchive,
-        'is_favorite': task.isFavorite,
-        'repeating_days': task.repeating,
-      },
-    );
+  #adaptToServer = (task) => {
+    const adaptedTask = {...task,
+      'due_date': task.dueDate instanceof Date ? task.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
+      'is_archived': task.isArchive,
+      'is_favorite': task.isFavorite,
+      'repeating_days': task.repeating,
+    };
 
     // Ненужные ключи мы удаляем
     delete adaptedTask.dueDate;
@@ -80,16 +93,12 @@ export default class ApiService {
     return adaptedTask;
   }
 
+  static parseResponse = (response) => response.json();
+
   static checkStatus(response) {
-    if (response.ok) {
-      return response;
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
     }
-
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-
-  static parseResponse(response) {
-    return response.json();
   }
 
   static catchError(err) {

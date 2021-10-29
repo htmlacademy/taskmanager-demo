@@ -1,102 +1,92 @@
+/* eslint-disable lines-between-class-members */
 import AbstractObservable from '../utils/abstract-observable.js';
 import {UpdateType} from '../const.js';
 
 export default class Tasks extends AbstractObservable {
+  #apiService = null;
+  #tasks = [];
+
   constructor(apiService) {
     super();
-    this._tasks = [];
-    this._apiService = apiService;
+    this.#apiService = apiService;
   }
 
-  init() {
-    return this._apiService.getTasks()
-      .then((tasks) => {
-        this._tasks = tasks.map(this._adaptToClient);
-      })
-      .catch(() => {})
-      .finally(() => {
-        this._notify(UpdateType.INIT);
-      });
-  }
-
-  getTasks() {
-    return this._tasks;
-  }
-
-  updateTask(updateType, update) {
-    const index = this._tasks.findIndex((task) => task.id === update.id);
-
-    if (index === -1) {
-      return Promise.reject('Can\'t update unexisting task');
+  init = async () => {
+    try {
+      const tasks = await this.#apiService.tasks;
+      this.#tasks = tasks.map(this.#adaptToClient);
+    } catch(err) {
+      this.#tasks = [];
     }
 
-    return this._apiService.updateTask(update)
-      .then((response) => {
-        const updatedTask = this._adaptToClient(response);
-        this._tasks = [
-          ...this._tasks.slice(0, index),
-          updatedTask,
-          ...this._tasks.slice(index + 1),
-        ];
-
-        this._notify(updateType, updatedTask);
-      })
-      .catch(() => {
-        throw new Error('Can\'t update task');
-      });
+    this.notify(UpdateType.INIT);
   }
 
-  addTask(updateType, update) {
-    return this._apiService.addTask(update)
-      .then((response) => {
-        const newTask = this._adaptToClient(response);
-        this._tasks = [
-          newTask,
-          ...this._tasks,
-        ];
-
-        this._notify(updateType, newTask);
-      })
-      .catch(() => {
-        throw new Error('Can\'t add task');
-      });
+  get tasks() {
+    return this.#tasks;
   }
 
-  deleteTask(updateType, update) {
-    const index = this._tasks.findIndex((task) => task.id === update.id);
+  updateTask = async (updateType, update) => {
+    const index = this.#tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      return Promise.reject('Can\'t delete unexisting task');
+      throw new Error('Can\'t update unexisting task');
     }
 
-    return this._apiService.deleteTask(update)
-      .then(() => {
-        // Обратите внимание, метод удаления задачи на сервере
-        // ничего не возвращает. Это и верно,
-        // ведь что можно вернуть при удалении задачи?
-        this._tasks = [
-          ...this._tasks.slice(0, index),
-          ...this._tasks.slice(index + 1),
-        ];
-
-        this._notify(updateType);
-      })
-      .catch(() => {
-        throw new Error('Can\'t delete task');
-      });
+    try {
+      const response = await this.#apiService.updateTask(update);
+      const updatedTask = this.#adaptToClient(response);
+      this.#tasks = [
+        ...this.#tasks.slice(0, index),
+        updatedTask,
+        ...this.#tasks.slice(index + 1),
+      ];
+      this.notify(updateType, updatedTask);
+    } catch(err) {
+      throw new Error('Can\'t update task');
+    }
   }
 
-  _adaptToClient(task) {
-    const adaptedTask = Object.assign(
-      {},
-      task,
-      {
-        dueDate: task['due_date'] !== null ? new Date(task['due_date']) : task['due_date'], // На клиенте дата хранится как экземпляр Date
-        isArchive: task['is_archived'],
-        isFavorite: task['is_favorite'],
-        repeating: task['repeating_days'],
-      },
-    );
+  addTask = async (updateType, update) => {
+    try {
+      const response = await this.#apiService.addTask(update);
+      const newTask = this.#adaptToClient(response);
+      this.#tasks = [newTask, ...this.#tasks];
+      this.notify(updateType, newTask);
+    } catch(err) {
+      throw new Error('Can\'t add task');
+    }
+  }
+
+  deleteTask = async (updateType, update) => {
+    const index = this.#tasks.findIndex((task) => task.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t delete unexisting task');
+    }
+
+    try {
+      // Обратите внимание, метод удаления задачи на сервере
+      // ничего не возвращает. Это и верно,
+      // ведь что можно вернуть при удалении задачи?
+      await this.#apiService.deleteTask(update);
+      this.#tasks = [
+        ...this.#tasks.slice(0, index),
+        ...this.#tasks.slice(index + 1),
+      ];
+      this.notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
+  }
+
+  #adaptToClient = (task) => {
+    const adaptedTask = {...task,
+      dueDate: task['due_date'] !== null ? new Date(task['due_date']) : task['due_date'], // На клиенте дата хранится как экземпляр Date
+      isArchive: task['is_archived'],
+      isFavorite: task['is_favorite'],
+      repeating: task['repeating_days'],
+    };
 
     // Ненужные ключи мы удаляем
     delete adaptedTask['due_date'];
