@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import Chart from 'chart.js';
@@ -12,6 +13,8 @@ import {
   parseChartDate,
   getDatesInRange
 } from '../utils/statistics.js';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const renderColorsChart = (colorsCtx, tasks) => {
   const taskColors = tasks.map((task) => task.color);
@@ -174,52 +177,53 @@ const createStatisticsTemplate = (data) => {
 };
 
 export default class Statistics extends SmartView {
+  #colorsChart = null;
+  #daysChart = null;
+  #datepicker = null;
+
   constructor(tasks) {
     super();
 
     this._data = {
       tasks,
       // По условиям техзадания по умолчанию интервал - неделя от текущей даты
-      dateFrom: (() => {
-        const daysToFullWeek = 6;
-        return dayjs().subtract(daysToFullWeek, 'day').toDate();
-      })(),
+      dateFrom: dayjs().subtract(6, 'day').toDate(),
       dateTo: dayjs().toDate(),
     };
 
-    this._colorsCart = null;
-    this._daysChart = null;
-
-    this._dateChangeHandler = this._dateChangeHandler.bind(this);
-
-    this._setCharts();
-    this._setDatepicker();
+    this.#setCharts();
+    this.#setDatepicker();
   }
 
-  removeElement() {
-    super.removeElement();
-
-    if (this._colorsCart !== null || this._daysChart !== null) {
-      this._colorsCart = null;
-      this._daysChart = null;
-    }
-
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
-  }
-
-  getTemplate() {
+  get template() {
     return createStatisticsTemplate(this._data);
   }
 
-  restoreHandlers() {
-    this._setCharts();
-    this._setDatepicker();
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#colorsChart) {
+      this.#colorsChart.destroy();
+      this.#colorsChart = null;
+    }
+
+    if (this.#daysChart) {
+      this.#daysChart.destroy();
+      this.#daysChart = null;
+    }
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
   }
 
-  _dateChangeHandler([dateFrom, dateTo]) {
+  restoreHandlers = () => {
+    this.#setCharts();
+    this.#setDatepicker();
+  }
+
+  #dateChangeHandler = ([dateFrom, dateTo]) => {
     if (!dateFrom || !dateTo) {
       return;
     }
@@ -230,34 +234,24 @@ export default class Statistics extends SmartView {
     });
   }
 
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
-
-    this._datepicker = flatpickr(
-      this.getElement().querySelector('.statistic__period-input'),
+  #setDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.statistic__period-input'),
       {
         mode: 'range',
         dateFormat: 'j F',
         defaultDate: [this._data.dateFrom, this._data.dateTo],
-        onChange: this._dateChangeHandler,
+        onChange: this.#dateChangeHandler,
       },
     );
   }
 
-  _setCharts() {
-    if (this._colorsCart !== null || this._daysChart !== null) {
-      this._colorsCart = null;
-      this._daysChart = null;
-    }
-
+  #setCharts = () => {
     const {tasks, dateFrom, dateTo} = this._data;
-    const colorsCtx = this.getElement().querySelector('.statistic__colors');
-    const daysCtx = this.getElement().querySelector('.statistic__days');
+    const colorsCtx = this.element.querySelector('.statistic__colors');
+    const daysCtx = this.element.querySelector('.statistic__days');
 
-    this._colorsCart = renderColorsChart(colorsCtx, tasks);
-    this._daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
+    this.#colorsChart = renderColorsChart(colorsCtx, tasks);
+    this.#daysChart = renderDaysChart(daysCtx, tasks, dateFrom, dateTo);
   }
 }

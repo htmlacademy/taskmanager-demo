@@ -158,90 +158,87 @@ const createTaskEditTemplate = (data) => {
 };
 
 export default class TaskEdit extends SmartView {
+  #datepicker = null;
+
   constructor(task = BLANK_TASK) {
     super();
     this._data = TaskEdit.parseTaskToData(task);
-    this._datepicker = null;
 
-    this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
-    this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
-    this._dueDateToggleHandler = this._dueDateToggleHandler.bind(this);
-    this._dueDateChangeHandler = this._dueDateChangeHandler.bind(this);
-    this._repeatingToggleHandler = this._repeatingToggleHandler.bind(this);
-    this._repeatingChangeHandler = this._repeatingChangeHandler.bind(this);
-    this._colorChangeHandler = this._colorChangeHandler.bind(this);
+    this.#setInnerHandlers();
+    this.#setDatepicker();
+  }
 
-    this._setInnerHandlers();
-    this._setDatepicker();
+  get template() {
+    return createTaskEditTemplate(this._data);
   }
 
   // Перегружаем метод родителя removeElement,
   // чтобы при удалении удалялся более не нужный календарь
-  removeElement() {
+  removeElement = () => {
     super.removeElement();
 
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
     }
   }
 
-  reset(task) {
+  reset = (task) => {
     this.updateData(
       TaskEdit.parseTaskToData(task),
     );
   }
 
-  getTemplate() {
-    return createTaskEditTemplate(this._data);
-  }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this._setDatepicker();
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
-  _setDatepicker() {
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.card__delete').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  #setDatepicker = () => {
     if (this._data.isDueDate) {
       // flatpickr есть смысл инициализировать только в случае,
       // если поле выбора даты доступно для заполнения
-      this._datepicker = flatpickr(
-        this.getElement().querySelector('.card__date'),
+      this.#datepicker = flatpickr(
+        this.element.querySelector('.card__date'),
         {
           dateFormat: 'j F',
           defaultDate: this._data.dueDate,
-          onChange: this._dueDateChangeHandler, // На событие flatpickr передаём наш колбэк
+          onChange: this.#dueDateChangeHandler, // На событие flatpickr передаём наш колбэк
         },
       );
     }
   }
 
-  _setInnerHandlers() {
-    this.getElement()
-      .querySelector('.card__date-deadline-toggle')
-      .addEventListener('click', this._dueDateToggleHandler);
-    this.getElement()
-      .querySelector('.card__repeat-toggle')
-      .addEventListener('click', this._repeatingToggleHandler);
-    this.getElement()
-      .querySelector('.card__text')
-      .addEventListener('input', this._descriptionInputHandler);
+  #setInnerHandlers = () => {
+    this.element.querySelector('.card__date-deadline-toggle')
+      .addEventListener('click', this.#dueDateToggleHandler);
+    this.element.querySelector('.card__repeat-toggle')
+      .addEventListener('click', this.#repeatingToggleHandler);
+    this.element.querySelector('.card__text')
+      .addEventListener('input', this.#descriptionInputHandler);
 
     if (this._data.isRepeating) {
-      this.getElement()
-        .querySelector('.card__repeat-days-inner')
-        .addEventListener('change', this._repeatingChangeHandler);
+      this.element.querySelector('.card__repeat-days-inner')
+        .addEventListener('change', this.#repeatingChangeHandler);
     }
 
-    this.getElement()
-      .querySelector('.card__colors-wrap')
-      .addEventListener('change', this._colorChangeHandler);
+    this.element.querySelector('.card__colors-wrap')
+      .addEventListener('change', this.#colorChangeHandler);
   }
 
-  _dueDateToggleHandler(evt) {
+  #dueDateToggleHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
       isDueDate: !this._data.isDueDate,
@@ -252,7 +249,7 @@ export default class TaskEdit extends SmartView {
     });
   }
 
-  _repeatingToggleHandler(evt) {
+  #repeatingToggleHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
       isRepeating: !this._data.isRepeating,
@@ -261,80 +258,60 @@ export default class TaskEdit extends SmartView {
     });
   }
 
-  _descriptionInputHandler(evt) {
+  #descriptionInputHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
       description: evt.target.value,
     }, true);
   }
 
-  _dueDateChangeHandler([userDate]) {
+  #dueDateChangeHandler = ([userDate]) => {
     this.updateData({
       dueDate: userDate,
     });
   }
 
-  _repeatingChangeHandler(evt) {
+  #repeatingChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
-      repeating: Object.assign(
-        {},
-        this._data.repeating,
-        {[evt.target.value]: evt.target.checked},
-      ),
+      repeating: {...this._data.repeating, [evt.target.value]: evt.target.checked},
     });
   }
 
-  _colorChangeHandler(evt) {
+  #colorChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
       color: evt.target.value,
     });
   }
 
-  _formSubmitHandler(evt) {
+  #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(TaskEdit.parseDataToTask(this._data));
   }
 
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
-  }
-
-  _formDeleteClickHandler(evt) {
+  #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick(TaskEdit.parseDataToTask(this._data));
   }
 
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector('.card__delete').addEventListener('click', this._formDeleteClickHandler);
-  }
-
-  static parseTaskToData(task) {
-    return Object.assign(
-      {},
-      task,
-      {
-        isDueDate: task.dueDate !== null,
-        isRepeating: isTaskRepeating(task.repeating),
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      },
-    );
-  }
+  static parseTaskToData = (task) => ({...task,
+    isDueDate: task.dueDate !== null,
+    isRepeating: isTaskRepeating(task.repeating),
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
+  });
 
   static parseDataToTask(data) {
-    data = Object.assign({}, data);
+    const task = {...data};
 
-    if (!data.isDueDate) {
-      data.dueDate = null;
+    if (!task.isDueDate) {
+      task.dueDate = null;
     }
 
-    if (!data.isRepeating) {
-      data.repeating = {
+    if (!task.isRepeating) {
+      task.repeating = {
         mo: false,
         tu: false,
         we: false,
@@ -345,12 +322,12 @@ export default class TaskEdit extends SmartView {
       };
     }
 
-    delete data.isDueDate;
-    delete data.isRepeating;
-    delete data.isDisabled;
-    delete data.isSaving;
-    delete data.isDeleting;
+    delete task.isDueDate;
+    delete task.isRepeating;
+    delete task.isDisabled;
+    delete task.isSaving;
+    delete task.isDeleting;
 
-    return data;
+    return task;
   }
 }

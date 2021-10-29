@@ -38,31 +38,25 @@ const createSiteMenuTemplate = () => (
 );
 
 export default class SiteMenu extends AbstractView {
-  constructor() {
-    super();
-
-    this._menuClickHandler = this._menuClickHandler.bind(this);
-  }
-
-  getTemplate() {
+  get template() {
     return createSiteMenuTemplate();
   }
 
-  _menuClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.menuClick(evt.target.value);
-  }
-
-  setMenuClickHandler(callback) {
+  setMenuClickHandler = (callback) => {
     this._callback.menuClick = callback;
-    this.getElement().addEventListener('change', this._menuClickHandler);
+    this.element.addEventListener('change', this.#menuClickHandler);
   }
 
-  setMenuItem(menuItem) {
-    const item = this.getElement().querySelector(`[value=${menuItem}]`);
+  setMenuItem = (menuItem) => {
+    const item = this.element.querySelector(`[value=${menuItem}]`);
 
     if (item !== null) {
       item.checked = true;
     }
+  }
+
+  #menuClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.menuClick(evt.target.value);
   }
 }

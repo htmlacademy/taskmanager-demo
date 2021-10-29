@@ -19,7 +19,7 @@ export default class Tasks extends AbstractObservable {
       this.#tasks = [];
     }
 
-    this.notify(UpdateType.INIT);
+    this._notify(UpdateType.INIT);
   }
 
   get tasks() {
@@ -41,7 +41,7 @@ export default class Tasks extends AbstractObservable {
         updatedTask,
         ...this.#tasks.slice(index + 1),
       ];
-      this.notify(updateType, updatedTask);
+      this._notify(updateType, updatedTask);
     } catch(err) {
       throw new Error('Can\'t update task');
     }
@@ -52,7 +52,7 @@ export default class Tasks extends AbstractObservable {
       const response = await this.#apiService.addTask(update);
       const newTask = this.#adaptToClient(response);
       this.#tasks = [newTask, ...this.#tasks];
-      this.notify(updateType, newTask);
+      this._notify(updateType, newTask);
     } catch(err) {
       throw new Error('Can\'t add task');
     }
@@ -74,7 +74,7 @@ export default class Tasks extends AbstractObservable {
         ...this.#tasks.slice(0, index),
         ...this.#tasks.slice(index + 1),
       ];
-      this.notify(updateType);
+      this._notify(updateType);
     } catch(err) {
       throw new Error('Can\'t delete task');
     }

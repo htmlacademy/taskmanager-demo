@@ -1,37 +1,38 @@
+/* eslint-disable lines-between-class-members */
 import {createElement} from '../utils/render.js';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export default class Abstract {
+  #element = null;
+  _callback = {};
+
   constructor() {
     if (new.target === Abstract) {
       throw new Error('Can\'t instantiate Abstract, only concrete one.');
     }
-
-    this._element = null;
-    this._callback = {};
   }
 
-  getTemplate() {
+  get template() {
     throw new Error('Abstract method not implemented: getTemplate');
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this._element;
+    return this.#element;
   }
 
   removeElement() {
-    this._element = null;
+    this.#element = null;
   }
 
   shake(callback) {
-    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this.element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
-      this.getElement().style.animation = '';
+      this.element.style.animation = '';
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

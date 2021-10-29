@@ -20,12 +20,14 @@ const createNoTaskTemplate = (filterType) => {
 };
 
 export default class NoTask extends AbstractView {
+  #data = null;
+
   constructor(data) {
     super();
-    this._data = data;
+    this.#data = data;
   }
 
-  getTemplate() {
-    return createNoTaskTemplate(this._data);
+  get template() {
+    return createNoTaskTemplate(this.#data);
   }
 }

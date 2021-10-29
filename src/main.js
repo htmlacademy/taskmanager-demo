@@ -23,8 +23,8 @@ const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterMod
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, tasksModel);
 
 const handleTaskNewFormClose = () => {
-  siteMenuComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = false;
-  siteMenuComponent.getElement().querySelector(`[value=${MenuItem.STATISTICS}]`).disabled = false;
+  siteMenuComponent.element.querySelector(`[value=${MenuItem.TASKS}]`).disabled = false;
+  siteMenuComponent.element.querySelector(`[value=${MenuItem.STATISTICS}]`).disabled = false;
   siteMenuComponent.setMenuItem(MenuItem.TASKS);
 };
 
@@ -39,8 +39,8 @@ const handleSiteMenuClick = (menuItem) => {
       boardPresenter.destroy();
       boardPresenter.init();
       boardPresenter.createTask(handleTaskNewFormClose);
-      siteMenuComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
-      siteMenuComponent.getElement().querySelector(`[value=${MenuItem.STATISTICS}]`).disabled = true;
+      siteMenuComponent.element.querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
+      siteMenuComponent.element.querySelector(`[value=${MenuItem.STATISTICS}]`).disabled = true;
       break;
     case MenuItem.TASKS:
       filterPresenter.init();
@@ -50,7 +50,7 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.STATISTICS:
       filterPresenter.destroy();
       boardPresenter.destroy();
-      statisticsComponent = new StatisticsView(tasksModel.getTasks());
+      statisticsComponent = new StatisticsView(tasksModel.tasks);
       render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
   }

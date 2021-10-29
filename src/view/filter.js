@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 import AbstractView from './abstract.js';
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
@@ -30,25 +31,26 @@ const createFilterTemplate = (filterItems, currentFilterType) => {
 };
 
 export default class Filter extends AbstractView {
+  #filters = null;
+  #currentFilter = null;
+
   constructor(filters, currentFilterType) {
     super();
-    this._filters = filters;
-    this._currentFilter = currentFilterType;
-
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this.#filters = filters;
+    this.#currentFilter = currentFilterType;
   }
 
-  getTemplate() {
-    return createFilterTemplate(this._filters, this._currentFilter);
+  get template() {
+    return createFilterTemplate(this.#filters, this.#currentFilter);
   }
 
-  _filterTypeChangeHandler(evt) {
+  setFilterTypeChangeHandler = (callback) =>{
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.value);
-  }
-
-  setFilterTypeChangeHandler(callback) {
-    this._callback.filterTypeChange = callback;
-    this.getElement().addEventListener('change', this._filterTypeChangeHandler);
   }
 }

@@ -8,8 +8,8 @@ export const RenderPosition = {
 };
 
 export const render = (container, element, place) => {
-  const parent = container instanceof Abstract ? container.getElement() : container;
-  const child = element instanceof Abstract ? element.getElement() : element;
+  const parent = container instanceof Abstract ? container.element : container;
+  const child = element instanceof Abstract ? element.element : element;
 
   switch (place) {
     case RenderPosition.BEFOREBEGIN:
@@ -46,8 +46,8 @@ export const replace = (newElement, oldElement) => {
     throw new Error('Can\'t replace unexisting elements');
   }
 
-  const newChild = newElement instanceof Abstract ? newElement.getElement() : newElement;
-  const oldChild = oldElement instanceof Abstract ? oldElement.getElement() : oldElement;
+  const newChild = newElement.element ?? newElement;
+  const oldChild = oldElement.element ?? oldElement;
 
   const parent = oldChild.parentElement;
 
@@ -67,6 +67,6 @@ export const remove = (component) => {
     throw new Error('Can remove only components');
   }
 
-  component.getElement().remove();
+  component.element.remove();
   component.removeElement();
 };
