@@ -3,12 +3,22 @@
   "version": "18.0.0",
   "private": true,
   "description": "Учебный демо-проект «Менеджер задач» от HTML Academy",
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all",
+    "not < 0.25%"
+  ],
   "scripts": {
     "lint": "eslint src/",
     "build": "webpack --mode production",
     "start": "webpack serve --mode development --open"
   },
   "devDependencies": {
+    "@babel/core": "7.18.6",
+    "@babel/preset-env": "7.18.6",
+    "babel-loader": "8.2.5",
     "copy-webpack-plugin": "10.2.4",
     "eslint": "8.19.0",
     "eslint-config-htmlacademy": "6.0.0",
