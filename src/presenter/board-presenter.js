@@ -85,6 +85,7 @@ export default class BoardPresenter {
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#blockUi();
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
@@ -111,6 +112,7 @@ export default class BoardPresenter {
         }
         break;
     }
+    this.#unblockUi();
   }
 
   #handleModelEvent = (updateType, data) => {
@@ -142,6 +144,14 @@ export default class BoardPresenter {
     this.#currentSortType = sortType;
     this.#clearBoard({resetRenderedTaskCount: true});
     this.#renderBoard();
+  }
+
+  #blockUi = () => {
+    document.querySelector('.ui-blocker').classList.add('ui-blocker--on');
+  }
+
+  #unblockUi = () => {
+    document.querySelector('.ui-blocker').classList.remove('ui-blocker--on');
   }
 
   #renderSort = () => {
