@@ -5,6 +5,7 @@ import LoadingView from '../view/loading.js';
 import NoTaskView from '../view/no-task.js';
 import LoadMoreButtonView from '../view/load-more-button.js';
 import TaskPresenter, {State as TaskPresenterViewState} from './task.js';
+// - export default который подтягивается под с другим именем – точно плохая идея, потому что сложно дебажить.
 import TaskNewPresenter from './task-new.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
@@ -69,6 +70,7 @@ export default class Board {
   _getTasks() {
     this._filterType = this._filterModel.getFilter();
     const tasks = this._tasksModel.getTasks();
+    // - Опечатка
     const filtredTasks = filter[this._filterType](tasks);
 
     switch (this._currentSortType) {

@@ -12,12 +12,20 @@ import Api from './api/api.js';
 import Store from './api/store.js';
 import Provider from './api/provider.js';
 
+// - Вкусовщина, но: не люблю, когда сетапят код сразу в файле. Во всех качественных языках есть специальная функция
+// main, которая воспроизводиться при начале работы приложения. Если надо сделать что-то до инициализации main
+// используется функция `init` (как в Go) или подобное. Это позволяет контролировать флоу сетапинга приложения не на
+// уровне импорта файлов, конкретно вручную программистом. Поэтому я бы обернул здесь все в `function main() {...}` и
+// вызвал ее.
+
+// - Эти константы должны быть частью внешней конфигурации (например, env)
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 const END_POINT = 'https://15.ecmascript.pages.academy/task-manager';
 const STORE_PREFIX = 'taskmanager-localstorage';
 const STORE_VER = 'v15';
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
+// - Нет проверок ни здесь, ни далее по коду на NULL
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = siteMainElement.querySelector('.main__control');
 
@@ -45,7 +53,9 @@ const handleSiteMenuClick = (menuItem) => {
       boardPresenter.destroy();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
       boardPresenter.init();
+      // - Если это будет true, то почему мы делаем все то, что делаем выше?
       if (!isOnline()) {
+        // - А если сеть появится пока человек заполняет поля, почему мы его не пускаем?
         toast('You can\'t create new task offline');
         siteMenuComponent.setMenuItem(MenuItem.TASKS);
         break;

@@ -20,6 +20,7 @@ export default class Tasks extends AbstractObserver {
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
+      // - Может лучше "" или `` вместо экранирования?
       throw new Error('Can\'t update unexisting task');
     }
 
@@ -42,6 +43,7 @@ export default class Tasks extends AbstractObserver {
   }
 
   deleteTask(updateType, update) {
+    // - Может просто `this._tasks.filter`?
     const index = this._tasks.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
@@ -56,6 +58,9 @@ export default class Tasks extends AbstractObserver {
     this._notify(updateType);
   }
 
+  // - Не помню как конкретно принято в MVP, но объеденять бизнес логику с маппингом данных из источника данных – плохая
+  // практика (вы, наверное, рассказываете про SOLID, не правда ли?). Под каждый истоник данных (сейчас у нас это 1 API)
+  // должен быть свой класс маппер (TaskAPIDataMapper), который умеет мапить модель к структуре данных API.
   static adaptToClient(task) {
     const adaptedTask = Object.assign(
       {},
@@ -68,6 +73,7 @@ export default class Tasks extends AbstractObserver {
       },
     );
 
+    // - Так нельзя. Создайте DTO класс (типа TaskServerDTO) в конструкторе которого принимайте нужные поля.
     // Ненужные ключи мы удаляем
     delete adaptedTask['due_date'];
     delete adaptedTask['is_archived'];
@@ -89,6 +95,7 @@ export default class Tasks extends AbstractObserver {
       },
     );
 
+    // - Тоже самое.
     // Ненужные ключи мы удаляем
     delete adaptedTask.dueDate;
     delete adaptedTask.isArchive;

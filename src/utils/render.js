@@ -39,6 +39,8 @@ export const createElement = (template) => {
 // а не просто <a>Link 1</a><a>Link 2</a>
 
 export const replace = (newChild, oldChild) => {
+  // ? Что-то меня смущает в переприсваивании аргументов... В JS нет понятия Pointer и по идее все безопасно...
+  // Но почему-то я бы не стал так делать.
   if (oldChild instanceof Abstract) {
     oldChild = oldChild.getElement();
   }
@@ -49,6 +51,7 @@ export const replace = (newChild, oldChild) => {
 
   const parent = oldChild.parentElement;
 
+  // - Если oldChild === null, то строчкой выше вылетела бы ошибка
   if (parent === null || oldChild === null || newChild === null) {
     throw new Error('Can\'t replace unexisting elements');
   }

@@ -57,6 +57,8 @@ export default class Provider {
         });
     }
 
+    // - Вот поэтому async / await гораздо приятнее в синтаксисе: можно было бы просто выкинуть ошибку, а не писать
+    // вот эту страшную конструкцию
     return Promise.reject(new Error('Add task failed'));
   }
 

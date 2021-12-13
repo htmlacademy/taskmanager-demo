@@ -12,9 +12,14 @@ const SuccessHTTPStatusRange = {
   MAX: 299,
 };
 
+// - Это God Object, в реальном проекте нельзя создавать 1 объект, в котором будут все ручки до бэка. Его надо было
+// оставить как обертку поверх API для сериализации / десериализации и обработки ошибок
 export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
+    // - А что делать если человек использует приложение не аутентифицированным, далее произвел аутентификацию?
+    // Это API создается 1 раз, как Singleton и чтобы добавить аутентификацию придется перезагружать страницу и
+    // ранить код заново.
     this._authorization = authorization;
   }
 
@@ -26,6 +31,7 @@ export default class Api {
 
   updateTask(task) {
     return this._load({
+      // - Все URL надо выносить в константы, чтобы можно было потом их конкатинировать и не ошибаться
       url: `tasks/${task.id}`,
       method: Method.PUT,
       body: JSON.stringify(TasksModel.adaptToServer(task)),
@@ -91,6 +97,8 @@ export default class Api {
     return response;
   }
 
+  // - Статические функции не используются нигде (и не должны), кроме этого класса, значит, они должны быть обычными
+  // неэкспортируемыми функциями.
   static toJSON(response) {
     return response.json();
   }

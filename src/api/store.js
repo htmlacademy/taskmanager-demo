@@ -1,3 +1,8 @@
+// - Вы абстрагируете Storage (типа "Адаптер" из Clean Architecture) и при этом пользуетесь интерфейсом localstorage.
+// Я не вижу кейсов при которых замена имплементации данного storage не заставила бы рефакторить данный код.
+// А значит в реальном проекте правильнее было бы сделать этот класс LocalStorageStore и прямо здесь работать с localstorage,
+// а вот уже адаптеры (если вообще нужно) делать на уровне, где разные виды Store (LocalStorageStore,
+// HTTPStore, IndexDBStore, etc.) используются (в нашем случае в Provider).
 export default class Store {
   constructor(key, storage) {
     this._storage = storage;
