@@ -9,6 +9,7 @@ import TaskNewPresenter from './task-new-presenter.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortTaskUp, sortTaskDown} from '../utils/task.js';
 import {filter} from '../utils/filter.js';
+import UiBlocker from '../utils/ui-blocker.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 
 const TASK_COUNT_PER_STEP = 8;
@@ -31,6 +32,7 @@ export default class BoardPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
   #isLoading = true;
+  #uiBlocker = new UiBlocker();
 
   constructor(boardContainer, tasksModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -85,7 +87,7 @@ export default class BoardPresenter {
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
-    this.#blockUi();
+    this.#uiBlocker.start();
     switch (actionType) {
       case UserAction.UPDATE_TASK:
         this.#taskPresenter.get(update.id).setViewState(TaskPresenterViewState.SAVING);
@@ -112,7 +114,7 @@ export default class BoardPresenter {
         }
         break;
     }
-    this.#unblockUi();
+    this.#uiBlocker.end();
   }
 
   #handleModelEvent = (updateType, data) => {
@@ -144,14 +146,6 @@ export default class BoardPresenter {
     this.#currentSortType = sortType;
     this.#clearBoard({resetRenderedTaskCount: true});
     this.#renderBoard();
-  }
-
-  #blockUi = () => {
-    document.querySelector('.ui-blocker').classList.add('ui-blocker--on');
-  }
-
-  #unblockUi = () => {
-    document.querySelector('.ui-blocker').classList.remove('ui-blocker--on');
   }
 
   #renderSort = () => {
