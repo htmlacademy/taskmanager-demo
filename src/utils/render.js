@@ -1,12 +1,19 @@
 import AbstractView from '../view/abstract-view.js';
 
+/**
+ * @enum {string} List of possible render positions
+ */
 export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
   AFTEREND: 'afterend',
 };
-
+/**
+ * @param {HTMLElement|AbstractView} container - Parent element or component
+ * @param {HTMLElement|AbstractView} element - Child element or component
+ * @param {string} place - Determines where the child element should be rendered
+ */
 export const render = (container, element, place) => {
   const parent = container instanceof AbstractView ? container.element : container;
   const child = element instanceof AbstractView ? element.element : element;
@@ -27,20 +34,21 @@ export const render = (container, element, place) => {
   }
 };
 
-// Принцип работы прост:
-// 1. создаём пустой div-блок
-// 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
-// 3. возвращаем этот DOM-элемент
+/**
+ * @param {string} template - Markup as a string
+ * @returns {HTMLElement} Created element
+ */
 export const createElement = (template) => {
   const newElement = document.createElement('div'); // 1
   newElement.innerHTML = template; // 2
 
   return newElement.firstChild; // 3
 };
-// Единственный нюанс, что HTML в строке должен иметь общую обёртку,
-// то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
-// а не просто <a>Link 1</a><a>Link 2</a>
 
+/**
+ * @param {HTMLElement|AbstractView} newElement - Element or component that should be shown
+ * @param {HTMLElement|AbstractView} oldElement - Element or component that should be hidden
+ */
 export const replace = (newElement, oldElement) => {
   if (newElement === null || oldElement === null) {
     throw new Error('Can\'t replace unexisting elements');
@@ -58,6 +66,9 @@ export const replace = (newElement, oldElement) => {
   parent.replaceChild(newChild, oldChild);
 };
 
+/**
+ * @param {AbstractView} component - Component that should be removed
+ */
 export const remove = (component) => {
   if (component === null) {
     return;

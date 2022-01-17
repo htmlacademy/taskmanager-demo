@@ -1,6 +1,9 @@
 import {FilterType} from '../const';
 import {isTaskExpired, isTaskExpiringToday, isTaskRepeating} from './task';
 
+/**
+ * @type {Object.<string, function>} Filter functions
+ */
 export const filter = {
   [FilterType.ALL]: (tasks) => tasks.filter((task) => !task.isArchive),
   [FilterType.OVERDUE]: (tasks) => tasks.filter((task) => isTaskExpired(task.dueDate) && !task.isArchive),
