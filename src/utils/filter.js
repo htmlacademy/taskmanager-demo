@@ -2,7 +2,7 @@ import {FilterType} from '../const';
 import {isTaskExpired, isTaskExpiringToday, isTaskRepeating} from './task';
 
 /**
- * @type {Object.<string, function>} Filter functions
+ * @type {Object.<string, function>} Функции фильтрации
  */
 export const filter = {
   [FilterType.ALL]: (tasks) => tasks.filter((task) => !task.isArchive),

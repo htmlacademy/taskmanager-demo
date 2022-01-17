@@ -2,9 +2,9 @@
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 
 /**
- * @param {number} a - First limit. Default value - 0
- * @param {number} b - Second limit. Default value - 1
- * @returns {number} - Random integer
+ * @param {number} a - Первая граница диапазона. Значение по умолчанию - 0
+ * @param {number} b - Вторая граница диапазона. Значение по умолчанию - 1
+ * @returns {number} - Случайное целое число
  */
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));

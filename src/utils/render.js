@@ -1,7 +1,7 @@
 import AbstractView from '../view/abstract-view.js';
 
 /**
- * @enum {string} List of possible render positions
+ * @enum {string} Перечисление возможных позиций для отрисовки
  */
 export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
@@ -10,9 +10,9 @@ export const RenderPosition = {
   AFTEREND: 'afterend',
 };
 /**
- * @param {HTMLElement|AbstractView} container - Parent element or component
- * @param {HTMLElement|AbstractView} element - Child element or component
- * @param {string} place - Determines where the child element should be rendered
+ * @param {HTMLElement|AbstractView} container - Контейнер, в котором будет отрисован новый элемент
+ * @param {HTMLElement|AbstractView} element - Элемент или компонент, который должен был отрисован
+ * @param {string} place - Позиция нового элемента относительно контейнера
  */
 export const render = (container, element, place) => {
   const parent = container instanceof AbstractView ? container.element : container;
@@ -35,19 +35,19 @@ export const render = (container, element, place) => {
 };
 
 /**
- * @param {string} template - Markup as a string
- * @returns {HTMLElement} Created element
+ * @param {string} template - Разметка в виде строки
+ * @returns {HTMLElement} Созданный элемент
  */
 export const createElement = (template) => {
-  const newElement = document.createElement('div'); // 1
-  newElement.innerHTML = template; // 2
+  const newElement = document.createElement('div');
+  newElement.innerHTML = template;
 
-  return newElement.firstChild; // 3
+  return newElement.firstChild;
 };
 
 /**
- * @param {HTMLElement|AbstractView} newElement - Element or component that should be shown
- * @param {HTMLElement|AbstractView} oldElement - Element or component that should be hidden
+ * @param {HTMLElement|AbstractView} newElement - Элемент или компонент, который нужно показать
+ * @param {HTMLElement|AbstractView} oldElement - Элемент или компонент, который нужно скрыть
  */
 export const replace = (newElement, oldElement) => {
   if (newElement === null || oldElement === null) {
@@ -67,7 +67,7 @@ export const replace = (newElement, oldElement) => {
 };
 
 /**
- * @param {AbstractView} component - Component that should be removed
+ * @param {AbstractView} component - Компонент, который нужно удалить
  */
 export const remove = (component) => {
   if (component === null) {
