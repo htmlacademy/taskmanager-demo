@@ -1,4 +1,4 @@
-import {render, remove} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import BoardView from '../view/board-view.js';
 import SortView from '../view/sort-view.js';
 import TaskListView from '../view/task-list-view.js';
@@ -54,7 +54,35 @@ export default class BoardPresenter {
   };
 
   #renderTask(task) {
-    const taskComponent = new TaskView({task});
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+    const taskComponent = new TaskView({
+      task,
+      onEditClick: () => {
+        replaceCardToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+    const taskEditComponent = new TaskEditView({
+      task,
+      onFormSubmit: () => {
+        replaceFormToCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replaceCardToForm() {
+      replace(taskEditComponent, taskComponent);
+    }
+
+    function replaceFormToCard() {
+      replace(taskComponent, taskEditComponent);
+    }
 
     render(taskComponent, this.#taskListComponent.element);
   }
