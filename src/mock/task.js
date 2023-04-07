@@ -1,4 +1,4 @@
-import {getRandomArrayElement} from '../utils.js';
+import {getRandomArrayElement} from '../utils/common.js';
 import {COLORS} from '../const.js';
 
 const mockTasks = [
