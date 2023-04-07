@@ -1,4 +1,4 @@
-import {render} from '../framework/render.js';
+import {render, remove} from '../framework/render.js';
 import BoardView from '../view/board-view.js';
 import SortView from '../view/sort-view.js';
 import TaskListView from '../view/task-list-view.js';
@@ -6,14 +6,18 @@ import TaskView from '../view/task-view.js';
 import TaskEditView from '../view/task-edit-view.js';
 import LoadMoreButtonView from '../view/load-more-button-view.js';
 
+const TASK_COUNT_PER_STEP = 8;
+
 export default class BoardPresenter {
   #boardContainer = null;
   #tasksModel = null;
 
   #boardComponent = new BoardView();
   #taskListComponent = new TaskListView();
+  #loadMoreButtonComponent = null;
 
   #boardTasks = [];
+  #renderedTaskCount = TASK_COUNT_PER_STEP;
 
   constructor({boardContainer, tasksModel}) {
     this.#boardContainer = boardContainer;
@@ -27,12 +31,27 @@ export default class BoardPresenter {
     render(new SortView(), this.#boardComponent.element);
     render(this.#taskListComponent, this.#boardComponent.element);
 
-    for (let i = 0; i < this.#boardTasks.length; i++) {
+    for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
       this.#renderTask(this.#boardTasks[i]);
     }
 
-    render(new LoadMoreButtonView(), this.#boardComponent.element);
+    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
+      this.#loadMoreButtonComponent = new LoadMoreButtonView({
+        onClick: this.#handleLoadMoreButtonClick
+      });
+      render(this.#loadMoreButtonComponent, this.#boardComponent.element);
+    }
   }
+
+  #handleLoadMoreButtonClick = () => {
+    this.#boardTasks
+      .slice(this.#renderedTaskCount, this.#renderedTaskCount + TASK_COUNT_PER_STEP)
+      .forEach((task) => this.#renderTask(task));
+    this.#renderedTaskCount += TASK_COUNT_PER_STEP;
+    if (this.#renderedTaskCount >= this.#boardTasks.length) {
+      remove(this.#loadMoreButtonComponent);
+    }
+  };
 
   #renderTask(task) {
     const taskComponent = new TaskView({task});
