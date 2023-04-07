@@ -27,20 +27,7 @@ export default class BoardPresenter {
   init() {
     this.#boardTasks = [...this.#tasksModel.tasks];
 
-    render(this.#boardComponent, this.#boardContainer);
-    render(new SortView(), this.#boardComponent.element);
-    render(this.#taskListComponent, this.#boardComponent.element);
-
-    for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
-      this.#renderTask(this.#boardTasks[i]);
-    }
-
-    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
-      this.#loadMoreButtonComponent = new LoadMoreButtonView({
-        onClick: this.#handleLoadMoreButtonClick
-      });
-      render(this.#loadMoreButtonComponent, this.#boardComponent.element);
-    }
+    this.#renderBoard();
   }
 
   #handleLoadMoreButtonClick = () => {
@@ -85,5 +72,22 @@ export default class BoardPresenter {
     }
 
     render(taskComponent, this.#taskListComponent.element);
+  }
+
+  #renderBoard() {
+    render(this.#boardComponent, this.#boardContainer);
+    render(new SortView(), this.#boardComponent.element);
+    render(this.#taskListComponent, this.#boardComponent.element);
+
+    for (let i = 0; i < Math.min(this.#boardTasks.length, TASK_COUNT_PER_STEP); i++) {
+      this.#renderTask(this.#boardTasks[i]);
+    }
+
+    if (this.#boardTasks.length > TASK_COUNT_PER_STEP) {
+      this.#loadMoreButtonComponent = new LoadMoreButtonView({
+        onClick: this.#handleLoadMoreButtonClick
+      });
+      render(this.#loadMoreButtonComponent, this.#boardComponent.element);
+    }
   }
 }
